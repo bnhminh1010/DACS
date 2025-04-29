@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tải lên tệp - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <div class="nav-links">
+          <a href="home.html">Trang chủ</a>
+          <a href="features.html">Tính năng</a>
+          <a href="contact.html">Liên hệ</a>
+          <a href="teacher-assignments.html">Quản lý bài tập</a>
+        </div>
+        <div class="auth-links" id="auth-links">
+          <span id="user-name-display"></span>
+          <button id="logout-button" class="btn btn-secondary">
+            Đăng xuất
+          </button>
+        </div>
+      </nav>
+
+      <div class="upload-container">
+        <h1>Tải lên tài liệu</h1>
+
+        <div class="upload-section">
+          <form id="uploadForm" class="upload-form">
+            <div class="file-input-container">
+              <input
+                type="file"
+                id="fileInput"
+                multiple
+                accept=".pdf,.doc,.docx"
+              />
+              <label for="fileInput" class="file-input-label">
+                Chọn tệp hoặc kéo thả vào đây
+              </label>
+            </div>
+            <div class="file-type-info">
+              <p>Định dạng được hỗ trợ: PDF, DOC, DOCX</p>
+              <p>Kích thước tối đa: 5MB</p>
+            </div>
+            <button type="submit" class="btn btn-primary">Tải lên</button>
+          </form>
+        </div>
+
+        <div class="file-list-section">
+          <h2>Danh sách tệp đã tải lên</h2>
+          <div class="file-list" id="fileList">
+            <!-- Danh sách tệp sẽ được thêm vào đây bằng JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Kiểm tra đăng nhập khi trang được tải
+      document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+
+        if (!token || !userString) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const user = JSON.parse(userString);
+
+          if (user.role !== "teacher") {
+            alert("Trang này chỉ dành cho giáo viên");
+            window.location.href = "dashboard.html";
+            return;
+          }
+
+          const userNameDisplay = document.getElementById("user-name-display");
+          if (user.fullName) {
+            userNameDisplay.textContent = user.fullName;
+          } else if (user.email) {
+            userNameDisplay.textContent = user.email;
+          }
+
+          const logoutButton = document.getElementById("logout-button");
+          if (logoutButton) {
+            logoutButton.onclick = function () {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              localStorage.removeItem("uploadedFiles"); // Xóa cả dữ liệu file đã upload
+              window.location.href = "home.html";
+            };
+          }
+
+          // Load danh sách file đã upload từ localStorage
+          loadUploadedFiles();
+        } catch (error) {
+          console.error("Lỗi khi xử lý thông tin người dùng:", error);
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        }
+      });
+
+      const uploadForm = document.getElementById("uploadForm");
+      const fileInput = document.getElementById("fileInput");
+      const fileList = document.getElementById("fileList");
+      let uploadedFiles = [];
+
+      // Load danh sách file đã upload từ localStorage
+      function loadUploadedFiles() {
+        const savedFiles = localStorage.getItem("uploadedFiles");
+        if (savedFiles) {
+          uploadedFiles = JSON.parse(savedFiles);
+          updateFileList();
+        }
+      }
+
+      // Lưu danh sách file vào localStorage
+      function saveUploadedFiles() {
+        localStorage.setItem("uploadedFiles", JSON.stringify(uploadedFiles));
+      }
+
+      // Xử lý kéo thả
+      const dropZone = document.querySelector(".file-input-container");
+
+      dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.classList.add("dragover");
+      });
+
+      dropZone.addEventListener("dragleave", () => {
+        dropZone.classList.remove("dragover");
+      });
+
+      dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+      });
+
+      fileInput.addEventListener("change", (e) => {
+        handleFiles(e.target.files);
+      });
+
+      function handleFiles(files) {
+        Array.from(files).forEach((file) => {
+          if (file.size > 5 * 1024 * 1024) {
+            alert(`Tệp ${file.name} vượt quá kích thước cho phép (5MB)`);
+            return;
+          }
+
+          if (!file.name.match(/\.(pdf|doc|docx)$/i)) {
+            alert(`Tệp ${file.name} không đúng định dạng`);
+            return;
+          }
+
+          // Chuyển đổi file thành Base64
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const fileData = {
+              name: file.name,
+              size: file.size,
+              type: file.type,
+              content: e.target.result,
+              uploadDate: new Date().toISOString(),
+            };
+
+            uploadedFiles.push(fileData);
+            saveUploadedFiles();
+            updateFileList();
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function updateFileList() {
+        fileList.innerHTML = "";
+        uploadedFiles.forEach((file, index) => {
+          const fileItem = document.createElement("div");
+          fileItem.className = "file-item";
+          fileItem.innerHTML = `
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+            <span class="upload-date">${new Date(file.uploadDate).toLocaleString()}</span>
+            <button class="btn btn-secondary delete-btn" data-index="${index}">Xóa</button>
+            <button class="btn btn-primary download-btn" data-index="${index}">Tải xuống</button>
+            <button class="btn btn-success generate-btn" data-index="${index}">Tạo câu hỏi</button>
+          `;
+          fileList.appendChild(fileItem);
+        });
+
+        // Thêm sự kiện xóa
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            uploadedFiles.splice(index, 1);
+            saveUploadedFiles();
+            updateFileList();
+          });
+        });
+
+        // Thêm sự kiện tải xuống
+        document.querySelectorAll(".download-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index);
+            const file = uploadedFiles[index];
+
+            // Tạo link tải xuống
+            const link = document.createElement("a");
+            link.href = file.content;
+            link.download = file.name;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          });
+        });
+
+        // Thêm sự kiện tạo câu hỏi
+        document.querySelectorAll(".generate-btn").forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const index = parseInt(e.target.dataset.index);
+            const file = uploadedFiles[index];
+
+            try {
+              // Hiển thị thông báo đang xử lý
+              btn.disabled = true;
+              btn.textContent = "Đang xử lý...";
+
+              // Kiểm tra file type
+              if (!file.type.match(/(pdf|msword|wordprocessingml)/i)) {
+                throw new Error(
+                  "Định dạng file không được hỗ trợ. Vui lòng sử dụng PDF, DOC hoặc DOCX"
+                );
+              }
+
+              console.log("File info:", {
+                name: file.name,
+                type: file.type,
+                size: file.size,
+              });
+
+              // Chuyển base64 thành Blob
+              const base64Response = await fetch(file.content);
+              const blob = await base64Response.blob();
+
+              // Tạo file từ blob
+              const fileFromBlob = new File([blob], file.name, {
+                type: file.type,
+              });
+
+              // Tạo FormData
+              const formData = new FormData();
+              formData.append("file", fileFromBlob);
+
+              // Gọi API để tạo câu hỏi
+              const token = localStorage.getItem("token");
+              if (!token) {
+                throw new Error("Không tìm thấy token xác thực");
+              }
+
+              const apiUrl = "http://127.0.0.1:3000/api/questions/generate";
+              console.log("Đang gửi request tới:", apiUrl);
+
+              const response = await fetch(apiUrl, {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+                body: formData,
+                mode: "cors",
+                credentials: "include",
+              });
+
+              console.log("Response status:", response.status);
+
+              let responseData;
+              const responseText = await response.text();
+              try {
+                responseData = JSON.parse(responseText);
+              } catch (e) {
+                console.error("Response text:", responseText);
+                throw new Error("Lỗi khi xử lý phản hồi từ server");
+              }
+
+              if (!response.ok) {
+                throw new Error(
+                  responseData.message ||
+                    responseData.error ||
+                    "Lỗi khi tạo câu hỏi"
+                );
+              }
+
+              console.log("Questions received:", responseData);
+
+              // Hiển thị kết quả trong modal
+              showQuestionsModal(responseData);
+            } catch (error) {
+              console.error("Chi tiết lỗi:", error);
+              alert("Có lỗi xảy ra khi tạo câu hỏi: " + error.message);
+            } finally {
+              // Khôi phục trạng thái nút
+              btn.disabled = false;
+              btn.textContent = "Tạo câu hỏi";
+            }
+          });
+        });
+      }
+
+      // Hàm hiển thị modal chứa câu hỏi
+      function showQuestionsModal(questions) {
+        // Tạo modal container
+        const modalContainer = document.createElement("div");
+        modalContainer.className = "modal-container";
+        modalContainer.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        `;
+
+        // Tạo modal content
+        const modalContent = document.createElement("div");
+        modalContent.className = "modal-content";
+        modalContent.style.cssText = `
+          background: white;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 800px;
+          max-height: 80vh;
+          overflow-y: auto;
+          position: relative;
+        `;
+
+        // Tạo nút đóng
+        const closeButton = document.createElement("button");
+        closeButton.textContent = "×";
+        closeButton.className = "modal-close";
+        closeButton.style.cssText = `
+          position: absolute;
+          right: 10px;
+          top: 10px;
+          border: none;
+          background: none;
+          font-size: 24px;
+          cursor: pointer;
+        `;
+
+        // Tạo nội dung câu hỏi
+        const questionsHtml = questions
+          .map(
+            (q, qIndex) => `
+          <div class="question" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+            <h3>Câu ${qIndex + 1}: ${q.question}</h3>
+            <div class="options" style="margin-left: 20px;">
+              ${q.options
+                .map(
+                  (opt, optIndex) => `
+                <div class="option" style="margin: 10px 0; ${opt.is_correct ? "color: green; font-weight: bold;" : ""}">
+                  ${String.fromCharCode(65 + optIndex)}. ${opt.text}
+                  ${opt.is_correct ? " ✓" : ""}
+                </div>
+              `
+                )
+                .join("")}
+            </div>
+            <div class="explanation" style="margin-top: 10px; font-style: italic; color: #666;">
+              Giải thích: ${q.explanation}
+            </div>
+          </div>
+        `
+          )
+          .join("");
+
+        // Thêm nút tạo bài tập
+        const createExamButton = document.createElement("button");
+        createExamButton.textContent = "Tạo bài tập";
+        createExamButton.className = "btn btn-primary";
+        createExamButton.style.cssText = `
+          display: block;
+          margin: 20px auto;
+          padding: 10px 20px;
+        `;
+
+        modalContent.innerHTML = `
+          <h2 style="margin-bottom: 20px;">Câu hỏi được tạo</h2>
+          ${questionsHtml}
+        `;
+
+        modalContent.appendChild(createExamButton);
+        modalContent.appendChild(closeButton);
+        modalContainer.appendChild(modalContent);
+        document.body.appendChild(modalContainer);
+
+        // Xử lý sự kiện tạo bài tập
+        createExamButton.onclick = async () => {
+          try {
+            const token = localStorage.getItem("token");
+            if (!token) {
+              throw new Error("Không tìm thấy token xác thực");
+            }
+
+            // Lấy file hiện tại và questions
+            const currentFile = uploadedFiles[uploadedFiles.length - 1];
+            if (!currentFile) {
+              throw new Error("Không tìm thấy file");
+            }
+
+            // Chuẩn bị dữ liệu
+            const examData = {
+              title: currentFile.name,
+              questions: questions.map((q) => ({
+                question: q.question,
+                explanation: q.explanation || "",
+                options: q.options.map((opt) => ({
+                  text: opt.text,
+                  is_correct: opt.is_correct,
+                })),
+              })),
+            };
+
+            console.log("Đang gửi dữ liệu:", examData);
+
+            // Gọi API tạo bài tập
+            const response = await fetch(
+              "http://127.0.0.1:3000/api/exams/create",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(examData),
+              }
+            );
+
+            // Kiểm tra response
+            const responseData = await response.json();
+
+            if (!response.ok) {
+              throw new Error(responseData.message || "Lỗi khi tạo bài tập");
+            }
+
+            // Thông báo thành công
+            alert("Đã tạo bài tập thành công!");
+            document.body.removeChild(modalContainer);
+          } catch (error) {
+            console.error("Chi tiết lỗi:", error);
+            alert("Có lỗi xảy ra khi tạo bài tập: " + error.message);
+          }
+        };
+
+        // Xử lý đóng modal
+        closeButton.onclick = () => {
+          document.body.removeChild(modalContainer);
+        };
+
+        modalContainer.onclick = (e) => {
+          if (e.target === modalContainer) {
+            document.body.removeChild(modalContainer);
+          }
+        };
+      }
+
+      uploadForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (fileInput.files.length === 0) {
+          alert("Vui lòng chọn ít nhất một tệp");
+          return;
+        }
+
+        try {
+          alert("Đã lưu " + fileInput.files.length + " tệp vào bộ nhớ cục bộ");
+          fileInput.value = ""; // Xóa input file sau khi upload
+        } catch (error) {
+          console.error("Chi tiết lỗi:", error);
+          alert("Có lỗi xảy ra khi lưu tệp: " + error.message);
+        }
+      });
+    </script>
+  </body>
+</html>

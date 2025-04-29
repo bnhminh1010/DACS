@@ -1,0 +1,14 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "do_an_co_so",
+      "database": "DoAnCoSo",
+      "username": "postgres"
+    }
+  ],
+  "git.ignoreLimitWarning": true
+}

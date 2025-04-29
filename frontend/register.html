@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng ký - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .error-message {
+        color: #dc3545;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      .role-selector {
+        display: flex;
+        gap: 15px;
+        margin-top: 5px;
+      }
+
+      .role-option {
+        flex: 1;
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #e1e1e1;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .role-option:hover {
+        border-color: #6c63ff;
+        background-color: #f8f7ff;
+      }
+
+      .role-option.selected {
+        border-color: #6c63ff;
+        background-color: #6c63ff15;
+        font-weight: 500;
+      }
+
+      .role-option span {
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-form">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <h2>Đăng ký</h2>
+        <div id="error-message" class="error-message"></div>
+        <form id="registerForm" action="#" method="POST">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Nhập email của bạn"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="full_name">Họ và tên</label>
+            <input
+              type="text"
+              id="full_name"
+              name="full_name"
+              placeholder="Nhập họ và tên của bạn"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Nhập mật khẩu (ít nhất 8 ký tự)"
+              required
+              minlength="8"
+            />
+          </div>
+          <div class="form-group">
+            <label>Vai trò của bạn</label>
+            <div class="role-selector">
+              <div class="role-option" data-role="student">
+                <span>Học sinh</span>
+              </div>
+              <div class="role-option" data-role="teacher">
+                <span>Giáo viên</span>
+              </div>
+            </div>
+            <input type="hidden" id="selectedRole" name="role" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Đăng ký</button>
+          <div class="auth-links-bottom">
+            <a href="login.html">Đã có tài khoản? Đăng nhập ngay</a><br />
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      // Xử lý chọn vai trò
+      const roleOptions = document.querySelectorAll(".role-option");
+      const selectedRoleInput = document.getElementById("selectedRole");
+      const errorMessageElement = document.getElementById("error-message");
+
+      // Chọn học sinh làm mặc định
+      document
+        .querySelector(".role-option[data-role='student']")
+        .classList.add("selected");
+      selectedRoleInput.value = "student";
+
+      roleOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+          roleOptions.forEach((opt) => opt.classList.remove("selected"));
+          option.classList.add("selected");
+          selectedRoleInput.value = option.dataset.role;
+
+          // Xóa thông báo lỗi nếu đã chọn vai trò
+          if (errorMessageElement.textContent.includes("vai trò")) {
+            errorMessageElement.textContent = "";
+            errorMessageElement.classList.remove("show");
+          }
+        });
+      });
+
+      // Xử lý đăng ký
+      const registerForm = document.getElementById("registerForm");
+
+      registerForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          errorMessageElement.textContent = "";
+          errorMessageElement.classList.remove("show");
+
+          // Hiển thị trạng thái đang xử lý
+          const submitButton = registerForm.querySelector(
+            'button[type="submit"]'
+          );
+          const originalButtonText = submitButton.textContent;
+          submitButton.textContent = "Đang xử lý...";
+          submitButton.disabled = true;
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const full_name = document.getElementById("full_name").value;
+          const role = selectedRoleInput.value;
+
+          // Kiểm tra dữ liệu đầu vào
+          if (!email || !password || !full_name || !role) {
+            throw new Error("Vui lòng điền đầy đủ thông tin đăng ký");
+          }
+
+          if (password.length < 8) {
+            throw new Error("Mật khẩu phải có ít nhất 8 ký tự");
+          }
+
+          // Kiểm tra kết nối server
+          try {
+            const serverCheck = await fetch(
+              "http://localhost:3000/api/health",
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }
+            );
+
+            if (!serverCheck.ok) {
+              throw new Error(
+                "Không thể kết nối đến máy chủ. Vui lòng thử lại sau."
+              );
+            }
+          } catch (error) {
+            throw new Error(
+              "Không thể kết nối đến máy chủ. Vui lòng kiểm tra nếu máy chủ đang chạy."
+            );
+          }
+
+          console.log("Đang gửi yêu cầu đăng ký đến server...");
+
+          const response = await fetch(
+            "http://localhost:3000/api/auth/register",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+              },
+              body: JSON.stringify({
+                email,
+                password,
+                full_name,
+                role,
+              }),
+            }
+          );
+
+          console.log("Mã trạng thái phản hồi:", response.status);
+          console.log(
+            "Headers phản hồi:",
+            Object.fromEntries(response.headers.entries())
+          );
+
+          // Lấy kết quả phản hồi dưới dạng text trước
+          const responseText = await response.text();
+          console.log("Phản hồi từ server:", responseText);
+
+          // Kiểm tra nếu responseText rỗng
+          if (!responseText.trim()) {
+            throw new Error("Server trả về phản hồi rỗng");
+          }
+
+          // Parse JSON sau khi đã kiểm tra
+          let data;
+          try {
+            data = JSON.parse(responseText);
+          } catch (jsonError) {
+            console.error("Lỗi khi phân tích JSON:", jsonError);
+            throw new Error("Phản hồi từ server không hợp lệ");
+          }
+
+          if (!response.ok) {
+            throw new Error(
+              data.message || `Đăng ký thất bại. Mã lỗi: ${response.status}`
+            );
+          }
+
+          // Khôi phục nút submit
+          submitButton.textContent = originalButtonText;
+          submitButton.disabled = false;
+
+          // Đăng ký thành công
+          if (data.token) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
+            // Thông báo thành công và chuyển hướng
+            alert("Đăng ký thành công! Chuyển hướng đến trang chủ.");
+
+            // Chuyển hướng dựa trên vai trò
+            if (data.user.role === "student") {
+              window.location.href = "student-assignments.html";
+            } else if (data.user.role === "teacher") {
+              window.location.href = "teacher-assignments.html";
+            } else {
+              window.location.href = "home.html";
+            }
+          } else {
+            // Đăng ký thành công nhưng không có token
+            alert("Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.");
+            window.location.href = "login.html";
+          }
+        } catch (error) {
+          console.error("Lỗi đăng ký:", error);
+
+          // Khôi phục nút submit
+          const submitButton = registerForm.querySelector(
+            'button[type="submit"]'
+          );
+          submitButton.textContent = "Đăng ký";
+          submitButton.disabled = false;
+
+          // Hiển thị thông báo lỗi chi tiết
+          errorMessageElement.textContent = error.message;
+          errorMessageElement.classList.add("show");
+        }
+      });
+    </script>
+  </body>
+</html>

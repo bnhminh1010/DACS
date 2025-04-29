@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThinkAI - Nền tảng học tập thông minh</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <div class="nav-links">
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="auth-links" id="auth-links">
+          <a href="login.html" class="btn btn-primary">Login</a>
+          <a href="register.html" class="btn btn-secondary">Register</a>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <h1 class="hero-title">
+          Tương lai của giáo dục với AI - Học nhanh hơn, thông minh hơn!
+        </h1>
+        <p class="hero-subtitle">
+          ThinkAI giúp giáo viên và học sinh tiếp cận công nghệ AI để tối ưu hóa
+          việc dạy và học
+        </p>
+        <div class="hero-buttons">
+          <a href="register.html" id="start-button" class="btn btn-primary"
+            >Bắt đầu ngay</a
+          >
+          <a href="readmore.html" class="btn btn-secondary">Tìm hiểu thêm</a>
+        </div>
+      </section>
+
+      <section id="about" class="content-section">
+        <div class="card">
+          <p class="card-text">
+            ThinkAI là một nền tảng web tiên tiến hỗ trợ giáo viên và học sinh
+            bằng cách ứng dụng AI vào quá trình học tập. Giáo viên có thể dễ
+            dàng tải lên tài liệu lý thuyết, và hệ thống sẽ tự động tạo ra các
+            câu hỏi trắc nghiệm chất lượng cao. Học sinh có thể đăng nhập để làm
+            bài, nhận điểm số ngay lập tức, trong khi giáo viên có thể theo dõi
+            tiến độ và kết quả học tập của từng học sinh. Với giao diện trực
+            quan, tích hợp công nghệ AI mạnh mẽ chạy trên máy local, ThinkAI
+            mang đến trải nghiệm học tập hiệu quả, nhanh chóng và hiện đại.
+          </p>
+        </div>
+      </section>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const authLinks = document.getElementById("auth-links");
+        const startButton = document.getElementById("start-button");
+
+        if (token && userString) {
+          try {
+            // Người dùng đã đăng nhập
+            const user = JSON.parse(userString);
+
+            // Cập nhật liên kết "Bắt đầu ngay" dựa trên vai trò
+            if (startButton) {
+              if (user.role === "teacher") {
+                startButton.href = "teacher-assignments.html"; // Giáo viên: đến trang quản lý bài tập
+              } else {
+                startButton.href = "student-assignments.html"; // Học sinh: đến trang danh sách bài tập
+              }
+            }
+
+            // Thay đổi nút login/register thành tên người dùng và nút đăng xuất
+            authLinks.innerHTML = `
+                        <span>${user.fullName || user.email}</span>
+                        <button id="logout-button" class="btn btn-secondary">Đăng xuất</button>
+                    `;
+
+            // Thêm sự kiện cho nút đăng xuất
+            setTimeout(() => {
+              const logoutButton = document.getElementById("logout-button");
+              if (logoutButton) {
+                logoutButton.onclick = function () {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                };
+              }
+            }, 100); // Chờ một chút để đảm bảo DOM đã được cập nhật
+          } catch (error) {
+            console.error("Lỗi khi xử lý thông tin người dùng:", error);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

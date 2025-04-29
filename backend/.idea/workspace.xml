@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a9d9fd05-ee20-4614-8cff-fae51729316b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.eslintrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.prettierrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/.prettierrc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/eslint.config.mjs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/nest-cli.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/app.controller.spec.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/app.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/app.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/app.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/config/configuration.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/config/database.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/config/validation.schema.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/database/database.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/main.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/ai-integration/ai-integration.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/ai-integration/ai-integration.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/ai-integration/ai-integration.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/ai-integration/dto/generate-questions.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/assignments.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/assignments.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/assignments.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/dto/create-assignment.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/dto/update-assignment.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/assignments/entities/assignment.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/auth.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/auth.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/auth.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/dto/login.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/dto/register.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/guards/jwt-auth.guard.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/guards/local-auth.guard.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/strategies/jwt.strategy.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/auth/strategies/local.strategy.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/classes.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/classes.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/classes.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/dto/create-class.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/dto/update-class.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/classes/entities/class.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/dto/update-material.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/dto/upload-material.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/entities/material.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/materials.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/materials.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/materials/materials.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/dto/create-question.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/dto/update-question.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/entities/question.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/questions.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/questions.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/questions/questions.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/dto/create-user.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/dto/update-user.dto.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/entities/user.entity.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/repositories/user.repository.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/users.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/users.module.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/src/modules/users/users.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/test/app.e2e-spec.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/test/jest-e2e.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/tsconfig.build.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/tsconfig.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do-an-co-so/webpack-hmr.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../database/csdl.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../database/csdl.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../do_an_co_so.session.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../eslint.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2vpNptin2eWRQAVKpwPBl3DYfPA" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_interpreter_path&quot;: &quot;node&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.26053.12" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a9d9fd05-ee20-4614-8cff-fae51729316b" name="Changes" comment="" />
+      <created>1744838241497</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744838241497</updated>
+      <workItem from="1744838242518" duration="9000" />
+      <workItem from="1744838264815" duration="4286000" />
+      <workItem from="1744844728566" duration="33000" />
+      <workItem from="1744892649713" duration="78000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

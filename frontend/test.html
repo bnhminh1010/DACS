@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kiểm tra API</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        white-space: pre-wrap;
+      }
+      button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Kiểm tra API đăng nhập</h1>
+
+    <button id="testBtn">Kiểm tra API đăng nhập</button>
+    <div id="result" class="result">Kết quả sẽ hiển thị ở đây...</div>
+
+    <script>
+      document
+        .getElementById("testBtn")
+        .addEventListener("click", async function () {
+          const resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = "Đang kiểm tra...";
+
+          try {
+            const email = "test@example.com";
+            const password = "password123";
+
+            resultDiv.innerHTML += `\nGửi yêu cầu đến: http://localhost:3000/auth/login\n`;
+            resultDiv.innerHTML += `\nDữ liệu gửi đi: { email: "${email}", password: "${password}" }\n`;
+
+            const response = await fetch("http://localhost:3000/auth/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const statusText = `\nTrạng thái phản hồi: ${response.status} ${response.statusText}\n`;
+            resultDiv.innerHTML += statusText;
+
+            // Thêm thông tin header
+            resultDiv.innerHTML += "\nHeader phản hồi:\n";
+            for (let [key, value] of response.headers.entries()) {
+              resultDiv.innerHTML += `${key}: ${value}\n`;
+            }
+
+            // Thử đọc dữ liệu phản hồi dưới nhiều định dạng
+            const text = await response.text();
+            resultDiv.innerHTML += `\nNội dung phản hồi dạng text:\n${text}\n`;
+
+            // Thử chuyển về JSON
+            try {
+              const data = JSON.parse(text);
+              resultDiv.innerHTML += `\nChuyển đổi thành công sang JSON:\n${JSON.stringify(data, null, 2)}\n`;
+            } catch (e) {
+              resultDiv.innerHTML += `\nKhông thể chuyển đổi phản hồi thành JSON: ${e.message}\n`;
+            }
+          } catch (error) {
+            resultDiv.innerHTML = `Lỗi: ${error.message}`;
+          }
+        });
+    </script>
+  </body>
+</html>

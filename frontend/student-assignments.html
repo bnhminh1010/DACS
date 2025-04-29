@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh sách bài tập - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .assignments-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .welcome-banner {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .welcome-banner h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .welcome-banner p {
+        color: #666;
+        margin-bottom: 0;
+      }
+
+      .filter-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .search-box {
+        flex-grow: 1;
+        max-width: 400px;
+        position: relative;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .filter-dropdown {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 14px;
+      }
+
+      .assignment-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 20px;
+      }
+
+      .assignment-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: transform 0.3s ease;
+        position: relative;
+      }
+
+      .assignment-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .assignment-status {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+
+      .status-new {
+        background-color: #e3f2fd;
+        color: #0d47a1;
+      }
+
+      .status-ongoing {
+        background-color: #fff8e1;
+        color: #ff6f00;
+      }
+
+      .status-completed {
+        background-color: #e8f5e9;
+        color: #1b5e20;
+      }
+
+      .status-overdue {
+        background-color: #ffebee;
+        color: #b71c1c;
+      }
+
+      .assignment-card h3 {
+        margin-top: 0;
+        color: #333;
+        font-size: 18px;
+        padding-right: 70px;
+      }
+
+      .assignment-meta {
+        margin: 15px 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .assignment-meta span {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .assignment-meta .label {
+        font-weight: 500;
+        color: #555;
+        display: inline-block;
+        width: 80px;
+      }
+
+      .assignment-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 15px;
+      }
+
+      .no-assignments {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        color: #666;
+      }
+
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .loading-spinner:after {
+        content: " ";
+        display: block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 6px solid #6c63ff;
+        border-color: #6c63ff transparent #6c63ff transparent;
+        animation: spinner 1.2s linear infinite;
+      }
+
+      @keyframes spinner {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .filter-bar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .search-box {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <div class="nav-links">
+          <a href="home.html">Trang chủ</a>
+          <a href="features.html">Tính năng</a>
+          <a href="contact.html">Liên hệ</a>
+          <a href="student-assignments.html" class="active">Bài tập</a>
+        </div>
+        <div class="auth-links" id="auth-links">
+          <span id="user-name-display"></span>
+          <button id="logout-button" class="btn btn-secondary">
+            Đăng xuất
+          </button>
+        </div>
+      </nav>
+
+      <div class="assignments-container">
+        <div class="welcome-banner">
+          <h2>Danh sách bài tập</h2>
+          <p>
+            Xem tất cả bài tập của bạn, bao gồm bài tập mới, đang làm, và đã
+            hoàn thành.
+          </p>
+        </div>
+
+        <div class="filter-bar">
+          <div class="search-box">
+            <input
+              type="text"
+              placeholder="Tìm kiếm bài tập..."
+              id="assignment-search"
+            />
+          </div>
+          <select class="filter-dropdown" id="status-filter">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="new">Mới</option>
+            <option value="ongoing">Đang làm</option>
+            <option value="completed">Đã hoàn thành</option>
+            <option value="overdue">Quá hạn</option>
+          </select>
+          <select class="filter-dropdown" id="sort-filter">
+            <option value="date-desc">Ngày giao (Mới nhất)</option>
+            <option value="date-asc">Ngày giao (Cũ nhất)</option>
+            <option value="due-asc">Hạn nộp (Sớm nhất)</option>
+            <option value="due-desc">Hạn nộp (Muộn nhất)</option>
+          </select>
+        </div>
+
+        <div id="assignment-list" class="assignment-list">
+          <div class="loading-spinner"></div>
+          <!-- Danh sách bài tập sẽ được thêm vào đây -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+
+        if (!token || !userString) {
+          // Chưa đăng nhập, chuyển hướng về trang login
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          // Parse thông tin người dùng từ localStorage
+          const user = JSON.parse(userString);
+
+          // Kiểm tra role, nếu không phải học sinh thì chuyển hướng
+          if (user.role !== "student") {
+            alert("Trang này chỉ dành cho học sinh");
+            window.location.href = "home.html";
+            return;
+          }
+
+          // Hiển thị tên người dùng
+          const userNameDisplay = document.getElementById("user-name-display");
+          if (user.full_name) {
+            userNameDisplay.textContent = user.full_name;
+          } else if (user.email) {
+            userNameDisplay.textContent = user.email;
+          }
+
+          // Xử lý nút đăng xuất
+          const logoutButton = document.getElementById("logout-button");
+          if (logoutButton) {
+            logoutButton.onclick = function () {
+              localStorage.removeItem("token");
+              localStorage.removeItem("user");
+              window.location.href = "home.html";
+            };
+          }
+
+          // Lấy danh sách bài tập
+          fetchExams();
+
+          // Thiết lập sự kiện cho bộ lọc
+          document
+            .getElementById("assignment-search")
+            .addEventListener("input", updateExamsList);
+          document
+            .getElementById("status-filter")
+            .addEventListener("change", updateExamsList);
+          document
+            .getElementById("sort-filter")
+            .addEventListener("change", updateExamsList);
+        } catch (error) {
+          console.error("Lỗi khi xử lý thông tin người dùng:", error);
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        }
+      });
+
+      // Dữ liệu bài tập
+      let exams = [];
+      let attempts = [];
+
+      // Hàm gọi API để lấy danh sách bài tập
+      async function fetchExams() {
+        const assignmentList = document.getElementById("assignment-list");
+        assignmentList.innerHTML = '<div class="loading-spinner"></div>';
+
+        try {
+          // Gọi API để lấy danh sách bài kiểm tra đã công bố
+          const examsResponse = await fetch(
+            "http://localhost:3000/api/exams/published",
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+
+          if (!examsResponse.ok) {
+            throw new Error("Không thể lấy danh sách bài kiểm tra");
+          }
+
+          const examsData = await examsResponse.json();
+          exams = examsData.exams || [];
+
+          // Gọi API để lấy danh sách lần làm bài của học sinh
+          const attemptsResponse = await fetch(
+            "http://localhost:3000/api/attempts/student",
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+
+          if (!attemptsResponse.ok) {
+            console.warn("Không thể lấy danh sách lần làm bài");
+          } else {
+            const attemptsData = await attemptsResponse.json();
+            attempts = attemptsData.attempts || [];
+          }
+
+          // Kết hợp thông tin bài kiểm tra và lần làm bài
+          for (const exam of exams) {
+            const examAttempts = attempts.filter((a) => a.exam_id === exam.id);
+
+            if (examAttempts.length > 0) {
+              // Nếu đã có lần làm bài, lấy lần làm bài mới nhất
+              const latestAttempt = examAttempts.sort(
+                (a, b) => new Date(b.created_at) - new Date(a.created_at)
+              )[0];
+
+              if (latestAttempt.is_completed) {
+                exam.status = "completed";
+                exam.score = latestAttempt.score;
+                exam.attempt_id = latestAttempt.id;
+              } else {
+                exam.status = "ongoing";
+                exam.attempt_id = latestAttempt.id;
+              }
+            } else {
+              exam.status = "new";
+            }
+          }
+
+          // Kiểm tra nếu không có bài tập nào
+          if (exams.length === 0) {
+            assignmentList.innerHTML = `
+              <div class="no-assignments">
+                <p>Hiện tại chưa có bài kiểm tra nào được công bố. Vui lòng quay lại sau.</p>
+              </div>
+            `;
+          } else {
+            updateExamsList();
+          }
+        } catch (error) {
+          console.error("Lỗi khi lấy danh sách bài tập:", error);
+          assignmentList.innerHTML = `
+            <div class="no-assignments">
+              <p>Có lỗi xảy ra khi tải danh sách bài kiểm tra. Vui lòng thử lại sau.</p>
+              <p>Chi tiết lỗi: ${error.message}</p>
+            </div>
+          `;
+        }
+      }
+
+      // Hàm cập nhật hiển thị danh sách bài tập dựa trên bộ lọc
+      function updateExamsList() {
+        const assignmentList = document.getElementById("assignment-list");
+        const searchTerm = document
+          .getElementById("assignment-search")
+          .value.toLowerCase();
+        const statusFilter = document.getElementById("status-filter").value;
+        const sortFilter = document.getElementById("sort-filter").value;
+
+        // Lọc danh sách bài tập
+        let filteredExams = exams.filter((exam) => {
+          // Lọc theo từ khóa tìm kiếm
+          const matchesSearch =
+            exam.title.toLowerCase().includes(searchTerm) ||
+            (exam.description &&
+              exam.description.toLowerCase().includes(searchTerm));
+
+          // Lọc theo trạng thái
+          const matchesStatus =
+            statusFilter === "all" || exam.status === statusFilter;
+
+          return matchesSearch && matchesStatus;
+        });
+
+        // Sắp xếp danh sách
+        filteredExams.sort((a, b) => {
+          switch (sortFilter) {
+            case "date-desc":
+              return new Date(b.created_at) - new Date(a.created_at);
+            case "date-asc":
+              return new Date(a.created_at) - new Date(b.created_at);
+            case "due-asc":
+              // Không có trường hạn nộp, có thể dùng created_at + 7 ngày làm giả định
+              const dueA = new Date(a.created_at);
+              const dueB = new Date(b.created_at);
+              dueA.setDate(dueA.getDate() + 7);
+              dueB.setDate(dueB.getDate() + 7);
+              return dueA - dueB;
+            case "due-desc":
+              const dueA2 = new Date(a.created_at);
+              const dueB2 = new Date(b.created_at);
+              dueA2.setDate(dueA2.getDate() + 7);
+              dueB2.setDate(dueB2.getDate() + 7);
+              return dueB2 - dueA2;
+            default:
+              return 0;
+          }
+        });
+
+        // Hiển thị danh sách đã lọc
+        if (filteredExams.length === 0) {
+          assignmentList.innerHTML = `
+            <div class="no-assignments">
+              <p>Không tìm thấy bài kiểm tra nào phù hợp với các bộ lọc hiện tại.</p>
+            </div>
+          `;
+        } else {
+          let html = "";
+          filteredExams.forEach((exam) => {
+            const createdDate = new Date(exam.created_at).toLocaleDateString(
+              "vi-VN"
+            );
+
+            let statusText = "";
+            let statusClass = "";
+            let actionHtml = "";
+
+            switch (exam.status) {
+              case "new":
+                statusText = "Mới";
+                statusClass = "status-new";
+                actionHtml = `<button class="btn btn-primary btn-sm" onclick="startExam(${exam.id})">Bắt đầu làm bài</button>`;
+                break;
+              case "ongoing":
+                statusText = "Đang làm";
+                statusClass = "status-ongoing";
+                actionHtml = `<button class="btn btn-primary btn-sm" onclick="continueExam(${exam.id}, ${exam.attempt_id})">Tiếp tục làm bài</button>`;
+                break;
+              case "completed":
+                statusText = "Đã hoàn thành";
+                statusClass = "status-completed";
+                actionHtml = `
+                  <button class="btn btn-secondary btn-sm" onclick="viewResults(${exam.attempt_id})">Xem kết quả</button>
+                  <span class="score-display">Điểm: ${exam.score.toFixed(1)}/10</span>
+                `;
+                break;
+            }
+
+            html += `
+              <div class="assignment-card">
+                <div class="assignment-status ${statusClass}">${statusText}</div>
+                <h3>${exam.title}</h3>
+                <div class="assignment-meta">
+                  <span><span class="label">Ngày tạo:</span> ${createdDate}</span>
+                  <span><span class="label">Người tạo:</span> ${exam.teacher_name || "Giáo viên"}</span>
+                  <span><span class="label">Mô tả:</span> ${exam.description || "Không có mô tả"}</span>
+                </div>
+                <div class="assignment-actions">
+                  ${actionHtml}
+                </div>
+              </div>
+            `;
+          });
+
+          assignmentList.innerHTML = html;
+        }
+      }
+
+      // Hàm bắt đầu làm bài thi
+      async function startExam(examId) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/api/attempts/exams/${examId}/start`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || "Không thể bắt đầu bài thi");
+          }
+
+          const data = await response.json();
+
+          // Chuyển hướng đến trang làm bài thi
+          window.location.href = `testexam.html?exam_id=${examId}&attempt_id=${data.attempt.id}`;
+        } catch (error) {
+          console.error("Lỗi khi bắt đầu bài thi:", error);
+          alert("Không thể bắt đầu bài thi: " + error.message);
+        }
+      }
+
+      // Hàm tiếp tục làm bài thi
+      function continueExam(examId, attemptId) {
+        window.location.href = `testexam.html?exam_id=${examId}&attempt_id=${attemptId}`;
+      }
+
+      // Hàm xem kết quả bài thi
+      function viewResults(attemptId) {
+        window.location.href = `testresult.html?attempt_id=${attemptId}`;
+      }
+    </script>
+  </body>
+</html>
