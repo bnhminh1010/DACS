@@ -1,6 +1,8 @@
-const { Pool } = require("pg");
-require("dotenv").config();
+const { Pool } = require("pg"); // Lấy thư viện pg kết nối db
+require("dotenv").config(); // Lấy thông tin từ file .env
 
+
+// Tạo một pool kết nối db, pool giúp tái sử dụng kết nối, tối ưu hiệu năng khi có nhiều request đồng thời
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -17,4 +19,4 @@ console.log("Initializing database connection with parameters:", {
   port: process.env.DB_PORT,
 });
 
-module.exports = pool;
+module.exports = pool; // xuất ra pool để sử dụng trong các route
