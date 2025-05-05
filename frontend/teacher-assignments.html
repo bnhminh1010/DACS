@@ -299,16 +299,19 @@
       <nav class="navbar">
         <a href="home.html" class="logo">ThinkAI</a>
         <div class="nav-links">
-          <a href="home.html">Trang chủ</a>
-          <a href="features.html">Tính năng</a>
-          <a href="contact.html">Liên hệ</a>
-          <a href="teacher-assignments.html" class="active">Quản lý bài tập</a>
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+          <a href="teacher-assignments.html" class="active">Assignments</a>
         </div>
         <div class="auth-links" id="auth-links">
-          <span id="user-name-display"></span>
           <button id="logout-button" class="btn btn-secondary">
             Đăng xuất
           </button>
+          <span
+            id="user-name-display"
+            style="display: block; margin-top: 8px"
+          ></span>
         </div>
       </nav>
 
@@ -325,7 +328,8 @@
             >
               Tải lên tài liệu
             </button>
-            <button id="create-assignment-btn" class="btn btn-primary">
+            <button id="create-assignment-btn" onclick="window.location.href='upfile.html'"   
+            class="btn btn-primary">
               Tạo bài tập mới
             </button>
           </div>

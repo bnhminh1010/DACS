@@ -191,6 +191,48 @@
           max-width: 100%;
         }
       }
+      /* Làm đẹp navbar links */
+      .nav-links {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .nav-links a {
+        font-family: "Poppins", "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 18px;
+        color: #222;
+        text-decoration: none;
+        margin: 0 18px;
+        padding: 8px 0;
+        position: relative;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: #ffb300;
+      }
+      .nav-links a.active::after,
+      .nav-links a:hover::after {
+        content: "";
+        display: block;
+        width: 60%;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
+      .nav-links a::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
     </style>
   </head>
   <body>
@@ -198,16 +240,19 @@
       <nav class="navbar">
         <a href="home.html" class="logo">ThinkAI</a>
         <div class="nav-links">
-          <a href="home.html">Trang chủ</a>
-          <a href="features.html">Tính năng</a>
-          <a href="contact.html">Liên hệ</a>
-          <a href="student-assignments.html" class="active">Bài tập</a>
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+          <a href="student-assignments.html" class="active">Assignments</a>
         </div>
         <div class="auth-links" id="auth-links">
-          <span id="user-name-display"></span>
           <button id="logout-button" class="btn btn-secondary">
             Đăng xuất
           </button>
+          <span
+            id="user-name-display"
+            style="display: block; margin-top: 8px"
+          ></span>
         </div>
       </nav>
 

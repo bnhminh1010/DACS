@@ -15,16 +15,19 @@
       <nav class="navbar">
         <a href="home.html" class="logo">ThinkAI</a>
         <div class="nav-links">
-          <a href="home.html">Trang chủ</a>
-          <a href="features.html">Tính năng</a>
-          <a href="contact.html">Liên hệ</a>
-          <a href="teacher-assignments.html">Quản lý bài tập</a>
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+          <a href="teacher-assignments.html">Assignments</a>
         </div>
         <div class="auth-links" id="auth-links">
-          <span id="user-name-display"></span>
           <button id="logout-button" class="btn btn-secondary">
             Đăng xuất
           </button>
+          <span
+            id="user-name-display"
+            style="display: block; margin-top: 8px"
+          ></span>
         </div>
       </nav>
 
@@ -83,8 +86,8 @@
           }
 
           const userNameDisplay = document.getElementById("user-name-display");
-          if (user.fullName) {
-            userNameDisplay.textContent = user.fullName;
+          if (user.full_name) {
+            userNameDisplay.textContent = user.full_name;
           } else if (user.email) {
             userNameDisplay.textContent = user.email;
           }
