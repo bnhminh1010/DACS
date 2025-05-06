@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
+const multer = require("multer"); // Thư viện để upload file pdf, doc, docx
 const questionController = require("../controllers/question.controller");
 const { auth, isTeacher } = require("../middlewares/auth.middleware");
 
@@ -8,7 +8,7 @@ const { auth, isTeacher } = require("../middlewares/auth.middleware");
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 5 * 1024 * 1024, // giới hạn file 5mb
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = [
@@ -28,7 +28,7 @@ const upload = multer({
   },
 });
 
-// Route để tạo câu hỏi từ file
+// Tạo câu hỏi từ file ( yêu cầu xác thực ( đăng ký, đăng nhập), là giáo viên)
 router.post(
   "/generate",
   auth,
@@ -37,10 +37,10 @@ router.post(
   questionController.generateQuestions
 );
 
-// Route để lấy câu hỏi theo ID
+//  Lấy câu hỏi theo ID ( yêu cầu xác thực ( đăng ký, đăng nhập))
 router.get("/:id", auth, questionController.getQuestionById);
 
-// Route để lấy tất cả câu hỏi của một bài tập
+// Lấy tất cả câu hỏi của một bài tập ( yêu cầu xác thực ( đăng ký, đăng nhập))
 router.get("/exam/:examId", auth, questionController.getQuestionsByExamId);
 
 module.exports = router;

@@ -1,9 +1,9 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user.model");
+const jwt = require("jsonwebtoken"); // Thư viện bảo mật jwt
+const User = require("../models/user.model"); // Lấy model user để lấy dữ liệu từ db
 
 const auth = async (req, res, next) => {
   try {
-    // Lấy token từ header
+    // Lấy token từ header Authorization từ request nơi client gửi token
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
@@ -14,10 +14,10 @@ const auth = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    // Verify token
+    // Verify token, lấy secret key từ file .env
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Tìm user từ database
+    // Tìm user từ database ( id đã giải mã từ token)
     const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(401).json({
@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
       });
     }
 
-    // Thêm thông tin user vào request
+    // Thêm thông tin user vào request để middleware và controller khác sử dụng
     req.user = user;
     next();
   } catch (error) {
@@ -38,6 +38,7 @@ const auth = async (req, res, next) => {
   }
 };
 
+// Kiểm tra xem người dùng có quyền giáo viên không
 const isTeacher = (req, res, next) => {
   if (!req.user || req.user.role !== "teacher") {
     return res.status(403).json({
@@ -48,6 +49,7 @@ const isTeacher = (req, res, next) => {
   next();
 };
 
+// Kiểm tra xem người dùng có quyền học sinh không
 const isStudent = (req, res, next) => {
   if (req.user.role !== "student") {
     return res
