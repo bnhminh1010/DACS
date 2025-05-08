@@ -9,6 +9,33 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Inter:wght@400;600&display=swap"
       rel="stylesheet"
     />
+    <style>
+      /* Làm radio button trong modal rõ ràng hơn */
+      .modal-content input[type="radio"] {
+        margin-right: 10px;
+        transform: scale(1.3);
+        accent-color: #6c63ff;
+        vertical-align: middle;
+      }
+      .modal-content .option {
+        display: flex;
+        align-items: center;
+        font-size: 1.08em;
+        padding: 4px 0;
+      }
+      /* Đáp án đúng mặc định (AI) */
+      .modal-content .option.default-correct {
+        background: #e3f2fd;
+        border-radius: 4px;
+      }
+      /* Đáp án đúng do người dùng chọn lại */
+      .modal-content .option.user-correct {
+        background: #ede7f6;
+        border-radius: 4px;
+        font-weight: bold;
+        color: #6c63ff;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -362,19 +389,25 @@
           cursor: pointer;
         `;
 
-        // Tạo nội dung câu hỏi
+        // Tạo nội dung câu hỏi với radio button để chọn đáp án đúng
         const questionsHtml = questions
-          .map(
-            (q, qIndex) => `
+          .map((q, qIndex) => {
+            // Xác định đáp án đúng mặc định (ban đầu)
+            const defaultCorrectIndex = q.options.findIndex(
+              (opt) => opt.is_correct
+            );
+            return `
           <div class="question" style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
             <h3>Câu ${qIndex + 1}: ${q.question}</h3>
             <div class="options" style="margin-left: 20px;">
               ${q.options
                 .map(
                   (opt, optIndex) => `
-                <div class="option" style="margin: 10px 0; ${opt.is_correct ? "color: green; font-weight: bold;" : ""}">
-                  ${String.fromCharCode(65 + optIndex)}. ${opt.text}
-                  ${opt.is_correct ? " ✓" : ""}
+                <div class="option${opt.is_correct ? " default-correct" : ""}" data-qindex="${qIndex}" data-optindex="${optIndex}">
+                  <input type="radio" id="q${qIndex}-opt${optIndex}" name="correct-${qIndex}" value="${optIndex}" ${opt.is_correct ? "checked" : ""} />
+                  <label for="q${qIndex}-opt${optIndex}" style="cursor:pointer;">
+                    ${String.fromCharCode(65 + optIndex)}. ${opt.text}
+                  </label>
                 </div>
               `
                 )
@@ -384,8 +417,8 @@
               Giải thích: ${q.explanation}
             </div>
           </div>
-        `
-          )
+        `;
+          })
           .join("");
 
         // Thêm nút tạo bài tập
@@ -408,6 +441,43 @@
         modalContainer.appendChild(modalContent);
         document.body.appendChild(modalContainer);
 
+        // Sau khi render, thêm logic đổi màu đáp án khi chọn lại
+        setTimeout(() => {
+          questions.forEach((q, qIndex) => {
+            const radios = modalContent.querySelectorAll(
+              `input[name="correct-${qIndex}"]`
+            );
+            radios.forEach((radio, optIndex) => {
+              radio.addEventListener("change", function () {
+                // Xóa class user-correct cho tất cả option
+                const allOptions = modalContent.querySelectorAll(
+                  `.option[data-qindex="${qIndex}"]`
+                );
+                allOptions.forEach((optDiv) => {
+                  optDiv.classList.remove("user-correct");
+                  // Nếu là đáp án mặc định thì trả lại màu default-correct nếu đúng
+                  if (
+                    parseInt(optDiv.dataset.optindex) ===
+                    q.options.findIndex((opt) => opt.is_correct)
+                  ) {
+                    optDiv.classList.add("default-correct");
+                  } else {
+                    optDiv.classList.remove("default-correct");
+                  }
+                });
+                // Thêm class user-correct cho option được chọn
+                const selectedDiv = modalContent.querySelector(
+                  `.option[data-qindex="${qIndex}"][data-optindex="${optIndex}"]`
+                );
+                if (selectedDiv) {
+                  selectedDiv.classList.add("user-correct");
+                  selectedDiv.classList.remove("default-correct");
+                }
+              });
+            });
+          });
+        }, 0);
+
         // Xử lý sự kiện tạo bài tập
         createExamButton.onclick = async () => {
           try {
@@ -422,17 +492,26 @@
               throw new Error("Không tìm thấy file");
             }
 
-            // Chuẩn bị dữ liệu
+            // Chuẩn bị dữ liệu, lấy đáp án đúng từ radio button
             const examData = {
               title: currentFile.name,
-              questions: questions.map((q) => ({
-                question: q.question,
-                explanation: q.explanation || "",
-                options: q.options.map((opt) => ({
-                  text: opt.text,
-                  is_correct: opt.is_correct,
-                })),
-              })),
+              questions: questions.map((q, qIndex) => {
+                // Lấy index đáp án đúng được chọn
+                const checkedRadio = modalContent.querySelector(
+                  `input[name="correct-${qIndex}"]:checked`
+                );
+                const correctIndex = checkedRadio
+                  ? parseInt(checkedRadio.value)
+                  : 0;
+                return {
+                  question: q.question,
+                  explanation: q.explanation || "",
+                  options: q.options.map((opt, optIndex) => ({
+                    text: opt.text,
+                    is_correct: optIndex === correctIndex,
+                  })),
+                };
+              }),
             };
 
             console.log("Đang gửi dữ liệu:", examData);
