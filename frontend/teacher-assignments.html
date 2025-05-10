@@ -302,17 +302,8 @@
           <a href="home.html">Home</a>
           <a href="features.html">Features</a>
           <a href="contact.html">Contact</a>
-          <a href="teacher-assignments.html" class="active">Assignments</a>
         </div>
-        <div class="auth-links" id="auth-links">
-          <button id="logout-button" class="btn btn-secondary">
-            Đăng xuất
-          </button>
-          <span
-            id="user-name-display"
-            style="display: block; margin-top: 8px"
-          ></span>
-        </div>
+        <div class="auth-links" id="auth-links"></div>
       </nav>
 
       <div class="assignments-container">
@@ -438,23 +429,26 @@
             return;
           }
 
-          // Hiển thị tên người dùng
-          const userNameDisplay = document.getElementById("user-name-display");
-          if (user.full_name) {
-            userNameDisplay.textContent = user.full_name;
-          } else if (user.email) {
-            userNameDisplay.textContent = user.email;
+          // Hiển thị tên người dùng và nút đăng xuất giống trang home
+          const authLinks = document.getElementById("auth-links");
+          if (authLinks) {
+            authLinks.innerHTML = `
+              <span class="btn btn-primary" style="background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;">${user.fullName || user.full_name || user.email}</span>
+              <button id="logout-button" class="btn btn-secondary" style="margin-left:10px;">Đăng xuất</button>
+            `;
           }
 
           // Xử lý nút đăng xuất
-          const logoutButton = document.getElementById("logout-button");
-          if (logoutButton) {
-            logoutButton.addEventListener("click", function () {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              window.location.href = "home.html";
-            });
-          }
+          setTimeout(() => {
+            const logoutButton = document.getElementById("logout-button");
+            if (logoutButton) {
+              logoutButton.onclick = function () {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "home.html";
+              };
+            }
+          }, 100);
 
           // Lấy danh sách bài kiểm tra
           fetchExams();

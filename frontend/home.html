@@ -80,9 +80,9 @@
 
             // Thay đổi nút login/register thành tên người dùng và nút đăng xuất
             authLinks.innerHTML = `
-                        <a href="dashboard.html" class="btn btn-primary">${user.fullName || user.email}</a>
-                        <button id="logout-button" class="btn btn-secondary">Đăng xuất</button>
-                    `;
+              <span class="btn btn-primary" style="background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;">${user.fullName || user.full_name || user.email}</span>
+              <button id="logout-button" class="btn btn-secondary" style="margin-left:10px;">Đăng xuất</button>
+            `;
 
             // Thêm sự kiện cho nút đăng xuất
             setTimeout(() => {

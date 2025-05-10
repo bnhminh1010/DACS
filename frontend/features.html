@@ -19,7 +19,7 @@
           <a href="features.html">Features</a>
           <a href="contact.html">Contact</a>
         </div>
-        <div class="auth-links">
+        <div class="auth-links" id="auth-links">
           <a href="login.html" class="btn btn-primary">Login</a>
           <a href="register.html" class="btn btn-secondary">Register</a>
         </div>
@@ -31,7 +31,7 @@
           Trải nghiệm học tập thông minh với công nghệ AI tiên tiến
         </p>
         <div class="hero-buttons">
-          <a href="register.html" class="btn btn-primary">Bắt đầu ngay</a>
+          <a href="register.html" id="start-button" class="btn btn-primary">Bắt đầu ngay</a>
           <a href="testexam.html" class="btn btn-secondary">Thử bài test</a>
         </div>
       </section>
@@ -64,5 +64,52 @@
         </div>
       </section>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const authLinks = document.getElementById("auth-links");
+        const startButton = document.getElementById("start-button");
+
+        if (token && userString) {
+          try {
+            // Người dùng đã đăng nhập
+            const user = JSON.parse(userString);
+
+            // Cập nhật liên kết "Bắt đầu ngay" dựa trên vai trò
+            if (startButton) {
+              if (user.role === "teacher") {
+                startButton.href = "teacher-assignments.html"; // Giáo viên: đến trang quản lý bài tập
+              } else {
+                startButton.href = "student-assignments.html"; // Học sinh: đến trang danh sách bài tập
+              }
+            }
+
+            // Thay đổi nút login/register thành tên người dùng và nút đăng xuất
+            authLinks.innerHTML = `
+              <span class="btn btn-primary" style="background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;">${user.fullName || user.full_name || user.email}</span>
+              <button id="logout-button" class="btn btn-secondary" style="margin-left:10px;">Đăng xuất</button>
+            `;
+
+            // Thêm sự kiện cho nút đăng xuất
+            setTimeout(() => {
+              const logoutButton = document.getElementById("logout-button");
+              if (logoutButton) {
+                logoutButton.onclick = function () {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                };
+              }
+            }, 100);
+          } catch (error) {
+            console.error("Lỗi khi xử lý thông tin người dùng:", error);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+        }
+      });
+    </script>
   </body>
 </html>

@@ -19,7 +19,7 @@
           <a href="features.html">Features</a>
           <a href="contact.html">Contact</a>
         </div>
-        <div class="auth-links">
+        <div class="auth-links" id="auth-links">
           <a href="login.html" class="btn btn-primary">Login</a>
           <a href="register.html" class="btn btn-secondary">Register</a>
         </div>
@@ -117,5 +117,34 @@
         </div>
       </div>
     </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const authLinks = document.getElementById("auth-links");
+        if (token && userString && authLinks) {
+          try {
+            const user = JSON.parse(userString);
+            authLinks.innerHTML = `
+              <span class=\"btn btn-primary\" style=\"background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;\">${user.fullName || user.full_name || user.email}</span>
+              <button id=\"logout-button\" class=\"btn btn-secondary\" style=\"margin-left:10px;\">Đăng xuất</button>
+            `;
+            setTimeout(() => {
+              const logoutButton = document.getElementById("logout-button");
+              if (logoutButton) {
+                logoutButton.onclick = function () {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                };
+              }
+            }, 100);
+          } catch (error) {
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+        }
+      });
+    </script>
   </body>
 </html>

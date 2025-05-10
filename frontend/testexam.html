@@ -214,12 +214,7 @@
           <a href="contact.html">Liên hệ</a>
           <a href="student-assignments.html">Bài tập</a>
         </div>
-        <div class="auth-links" id="auth-links">
-          <span id="user-name-display"></span>
-          <button id="logout-button" class="btn btn-secondary">
-            Đăng xuất
-          </button>
-        </div>
+        <div class="auth-links" id="auth-links"></div>
       </nav>
 
       <div id="exam-container" class="exam-container">
@@ -245,23 +240,25 @@
           // Parse thông tin người dùng từ localStorage
           const user = JSON.parse(userString);
 
-          // Hiển thị tên người dùng
-          const userNameDisplay = document.getElementById("user-name-display");
-          if (user.full_name) {
-            userNameDisplay.textContent = user.full_name;
-          } else if (user.email) {
-            userNameDisplay.textContent = user.email;
+          // Hiển thị tên người dùng và nút đăng xuất giống trang teacher-assignments
+          const authLinks = document.getElementById("auth-links");
+          if (authLinks) {
+            authLinks.innerHTML = `
+              <span class=\"btn btn-primary\" style=\"background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;font-size:20px;line-height:40px;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;\">${user.fullName || user.full_name || user.email}</span>
+              <button id=\"logout-button\" class=\"btn btn-secondary\" style=\"margin-left:10px;height:48px;min-width:140px;font-size:20px;font-weight:500;border-radius:12px;\">Đăng xuất</button>
+            `;
           }
 
-          // Xử lý nút đăng xuất
-          const logoutButton = document.getElementById("logout-button");
-          if (logoutButton) {
-            logoutButton.onclick = function () {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user");
-              window.location.href = "home.html";
-            };
-          }
+          setTimeout(() => {
+            const logoutButton = document.getElementById("logout-button");
+            if (logoutButton) {
+              logoutButton.onclick = function () {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "home.html";
+              };
+            }
+          }, 100);
 
           // Lấy examId và attemptId từ URL
           const urlParams = new URLSearchParams(window.location.search);
