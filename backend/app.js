@@ -5,6 +5,7 @@ const { Pool } = require("pg"); // Thư viện kết nối PostgreSQL
 const authRoutes = require("./routes/auth.routes"); // Quản lý endpoint người dùng
 const questionRoutes = require("./routes/question.routes"); // Quản lí endpoint câu hỏi
 const examRoutes = require("./routes/exam.routes"); // Quản lý endpoint bài tập
+const attemptRoutes = require("./routes/attempt.routes"); // Quản lý endpoint làm bài thi
 require("dotenv").config(); // Dùng để đọc các thông tin quan trọng trong file .env
 
 const app = express(); // Khởi tạo app bằng framework express
@@ -55,6 +56,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/exams", examRoutes);
+app.use("/api/attempts", attemptRoutes);
 
 // Bắt mọi lỗi phát sinh, trả về mã 500, ghi ra log console
 app.use((err, req, res, next) => {

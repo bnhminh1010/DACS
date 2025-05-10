@@ -1,6 +1,7 @@
-const db = require('../config/db');
+const db = require("../config/db"); // Liên kết db
 
 const Option = {
+  // Tạo đáp án ( Bao gồm mã câu hỏi, nội dung, đúng/sai )
   create: async (optionData) => {
     const { question_id, content, is_correct } = optionData;
 
@@ -18,8 +19,9 @@ const Option = {
     }
   },
 
+  // Tìm kiếm đáp án theo mã câu hỏi
   findByQuestionId: async (questionId) => {
-    const query = 'SELECT * FROM options WHERE question_id = $1';
+    const query = "SELECT * FROM options WHERE question_id = $1";
 
     try {
       const result = await db.query(query, [questionId]);
@@ -27,7 +29,7 @@ const Option = {
     } catch (error) {
       throw error;
     }
-  }
+  },
 };
 
 module.exports = Option;

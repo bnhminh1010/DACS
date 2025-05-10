@@ -1,6 +1,6 @@
-const db = require("../config/db");
-const bcrypt = require("bcrypt");
-const { saltRounds } = require("../config/auth");
+const db = require("../config/db"); // Liên kết db
+const bcrypt = require("bcrypt"); // Thư viện mã hóa mật khẩu
+const { saltRounds } = require("../config/auth"); // Số vòng lặp mã hóa 
 
 const User = {
   create: async (userData) => {
@@ -42,6 +42,7 @@ const User = {
     }
   },
 
+  // Tìm kiếm người dùng theo email
   findByEmail: async (email) => {
     const query = "SELECT * FROM users WHERE email = $1";
 
@@ -59,6 +60,7 @@ const User = {
     }
   },
 
+  // Tìm kiếm người dùng theo id
   findById: async (id) => {
     const query =
       "SELECT id, email, full_name, role, created_at FROM users WHERE id = $1";
@@ -77,6 +79,7 @@ const User = {
     }
   },
 
+  // Lấy danh sách học sinh
   getStudents: async () => {
     const query =
       "SELECT id, email, full_name, created_at FROM users WHERE role = $1";
@@ -91,6 +94,7 @@ const User = {
     }
   },
 
+  // Lấy danh sách giáo viên
   getTeachers: async () => {
     const query =
       "SELECT id, email, full_name, created_at FROM users WHERE role = $1";

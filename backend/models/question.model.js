@@ -1,7 +1,8 @@
-const { Pool } = require("pg");
-const pool = require("../config/database");
+const { Pool } = require("pg"); // Thêm thư viện pool
+const pool = require("../config/database"); // Tạo pool kết nối db
 
 class Question {
+  // Tạo câu hỏi ( truyền vào câu hỏi, giải thích, mã bài thi )
   static async create(questionData) {
     const { question, explanation, options, exam_id } = questionData;
 
@@ -9,7 +10,7 @@ class Question {
     try {
       await client.query("BEGIN");
 
-      // Insert question
+      // Thêm câu hỏi
       const questionResult = await client.query(
         `INSERT INTO questions (content, explanation, exam_id, created_at, updated_at)
          VALUES ($1, $2, $3, NOW(), NOW())
@@ -19,7 +20,7 @@ class Question {
 
       const questionId = questionResult.rows[0].id;
 
-      // Insert options
+      // Thêm các lựa chọn
       for (const option of options) {
         await client.query(
           `INSERT INTO options (question_id, content, is_correct)
@@ -39,6 +40,7 @@ class Question {
     }
   }
 
+  // Tìm kiếm câu hỏi theo id
   static async findById(id) {
     const result = await pool.query(
       `SELECT q.*, json_agg(json_build_object('id', o.id, 'content', o.content, 'is_correct', o.is_correct)) as options
@@ -51,6 +53,7 @@ class Question {
     return result.rows[0];
   }
 
+  // Tìm kiếm câu hỏi theo mã bài thi
   static async findByExamId(examId) {
     const result = await pool.query(
       `SELECT q.*, json_agg(json_build_object('id', o.id, 'content', o.content, 'is_correct', o.is_correct)) as options

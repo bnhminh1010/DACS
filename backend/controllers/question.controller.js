@@ -50,7 +50,7 @@ const questionController = {
 
   getQuestionsByExamId: async (req, res) => {
     try {
-      const questions = await Question.find({ exam: req.params.examId });
+      const questions = await Question.findByExamId(req.params.examId);
       res.json(questions);
     } catch (error) {
       res.status(500).json({

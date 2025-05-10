@@ -1,6 +1,7 @@
-const Attempt = require('../models/attempt.model');
-const Response = require('../models/response.model');
-const Exam = require('../models/exam.model');
+const Attempt = require("../models/attempt.model");
+const Response = require("../models/response.model");
+const Exam = require("../models/exam.model");
+const Question = require("../models/question.model");
 
 const startExam = async (req, res) => {
   try {
@@ -9,44 +10,49 @@ const startExam = async (req, res) => {
     // Check if exam exists and is published
     const exam = await Exam.findById(examId);
     if (!exam) {
-      return res.status(404).json({ message: 'Không tìm thấy bài kiểm tra' });
+      return res.status(404).json({ message: "Không tìm thấy bài kiểm tra" });
     }
 
     if (!exam.is_published) {
-      return res.status(403).json({ message: 'Bài kiểm tra này chưa được công bố' });
+      return res
+        .status(403)
+        .json({ message: "Bài kiểm tra này chưa được công bố" });
     }
 
     // Check if user already has an attempt for this exam
-    const existingAttempt = await Attempt.findByStudentAndExam(req.user.id, examId);
+    const existingAttempt = await Attempt.findByStudentAndExam(
+      req.user.id,
+      examId
+    );
     if (existingAttempt && existingAttempt.is_completed) {
       return res.status(400).json({
-        message: 'Bạn đã hoàn thành bài kiểm tra này',
-        attemptId: existingAttempt.id
+        message: "Bạn đã hoàn thành bài kiểm tra này",
+        attemptId: existingAttempt.id,
       });
     }
 
     if (existingAttempt && !existingAttempt.is_completed) {
       return res.status(200).json({
-        message: 'Tiếp tục làm bài kiểm tra',
-        attempt: existingAttempt
+        message: "Tiếp tục làm bài kiểm tra",
+        attempt: existingAttempt,
       });
     }
 
     // Create new attempt
     const attemptData = {
       student_id: req.user.id,
-      exam_id: examId
+      exam_id: examId,
     };
 
     const attempt = await Attempt.create(attemptData);
 
     res.status(201).json({
-      message: 'Bắt đầu làm bài kiểm tra',
-      attempt
+      message: "Bắt đầu làm bài kiểm tra",
+      attempt,
     });
   } catch (error) {
-    console.error('Start exam error:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error("Start exam error:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 
@@ -55,88 +61,126 @@ const submitAnswer = async (req, res) => {
     const { attemptId, questionId, optionId } = req.body;
 
     if (!attemptId || !questionId || !optionId) {
-      return res.status(400).json({ message: 'Thiếu thông tin câu trả lời' });
+      return res.status(400).json({ message: "Thiếu thông tin câu trả lời" });
     }
 
     // Check if attempt exists and belongs to user
     const attempt = await Attempt.findById(attemptId);
     if (!attempt) {
-      return res.status(404).json({ message: 'Không tìm thấy lần làm bài' });
+      return res.status(404).json({ message: "Không tìm thấy lần làm bài" });
     }
 
     if (attempt.student_id !== req.user.id) {
-      return res.status(403).json({ message: 'Bạn không có quyền gửi câu trả lời cho lần làm bài này' });
+      return res.status(403).json({
+        message: "Bạn không có quyền gửi câu trả lời cho lần làm bài này",
+      });
     }
 
     if (attempt.is_completed) {
-      return res.status(400).json({ message: 'Bài kiểm tra đã được hoàn thành' });
+      return res
+        .status(400)
+        .json({ message: "Bài kiểm tra đã được hoàn thành" });
     }
 
     // Save response
     const responseData = {
       attempt_id: attemptId,
       question_id: questionId,
-      option_id: optionId
+      option_id: optionId,
     };
 
     await Response.create(responseData);
 
-    res.status(200).json({ message: 'Đã lưu câu trả lời' });
+    res.status(200).json({ message: "Đã lưu câu trả lời" });
   } catch (error) {
-    console.error('Submit answer error:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error("Submit answer error:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 
 const completeExam = async (req, res) => {
   try {
+    console.log("Bắt đầu hoàn thành bài thi", req.params);
     const attemptId = req.params.id;
 
     // Check if attempt exists and belongs to user
     const attempt = await Attempt.findById(attemptId);
+    console.log("Thông tin attempt:", attempt);
+
     if (!attempt) {
-      return res.status(404).json({ message: 'Không tìm thấy lần làm bài' });
+      return res.status(404).json({ message: "Không tìm thấy lần làm bài" });
     }
 
     if (attempt.student_id !== req.user.id) {
-      return res.status(403).json({ message: 'Bạn không có quyền hoàn thành lần làm bài này' });
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền hoàn thành lần làm bài này" });
     }
 
     if (attempt.is_completed) {
-      return res.status(400).json({ message: 'Bài kiểm tra đã được hoàn thành' });
+      return res
+        .status(400)
+        .json({ message: "Bài kiểm tra đã được hoàn thành" });
     }
 
     // Get exam with questions
-    const exam = await Exam.getExamWithQuestions(attempt.exam_id);
+    const exam = await Exam.findById(attempt.exam_id);
+    console.log("Thông tin exam:", exam);
+
+    const questions = await Question.findByExamId(attempt.exam_id);
+    console.log("Số lượng câu hỏi:", questions.length);
 
     // Get student responses
     const responses = await Response.findByAttemptId(attemptId);
+    console.log(
+      "Số lượng câu trả lời:",
+      responses.length,
+      "Dữ liệu:",
+      responses
+    );
+
+    // Kiểm tra có câu trả lời nào không
+    if (!responses || responses.length === 0) {
+      console.log("Không có câu trả lời nào, gắn điểm là 0");
+      const completedAttempt = await Attempt.complete(attemptId, 0);
+      return res.status(200).json({
+        message: "Bài kiểm tra đã hoàn thành nhưng không có câu trả lời nào",
+        attempt: completedAttempt,
+        score: 0,
+        correctAnswers: 0,
+        totalQuestions: questions.length,
+      });
+    }
 
     // Calculate score
     let correctAnswers = 0;
 
     for (const response of responses) {
+      console.log("Kiểm tra câu trả lời:", response);
       if (response.is_correct) {
         correctAnswers++;
       }
     }
 
-    const totalQuestions = exam.questions.length;
-    const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 10 : 0;
+    const totalQuestions = questions.length;
+    const score =
+      totalQuestions > 0 ? (correctAnswers / totalQuestions) * 10 : 0;
+    console.log(`Điểm số: ${correctAnswers}/${totalQuestions} = ${score}`);
 
     // Update attempt as completed
     const completedAttempt = await Attempt.complete(attemptId, score);
+    console.log("Đã hoàn thành bài thi:", completedAttempt);
 
     res.status(200).json({
-      message: 'Bài kiểm tra đã hoàn thành',
+      message: "Bài kiểm tra đã hoàn thành",
       attempt: completedAttempt,
       score,
       correctAnswers,
-      totalQuestions
+      totalQuestions,
     });
   } catch (error) {
-    console.error('Complete exam error:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error("Complete exam error:", error);
+    res.status(500).json({ message: "Lỗi server: " + error.message });
   }
 };
 
@@ -147,15 +191,17 @@ const getAttemptResults = async (req, res) => {
     // Check if attempt exists and belongs to user
     const attempt = await Attempt.findById(attemptId);
     if (!attempt) {
-      return res.status(404).json({ message: 'Không tìm thấy lần làm bài' });
+      return res.status(404).json({ message: "Không tìm thấy lần làm bài" });
     }
 
-    if (attempt.student_id !== req.user.id && req.user.role !== 'teacher') {
-      return res.status(403).json({ message: 'Bạn không có quyền xem kết quả này' });
+    if (attempt.student_id !== req.user.id && req.user.role !== "teacher") {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền xem kết quả này" });
     }
 
     if (!attempt.is_completed) {
-      return res.status(400).json({ message: 'Bài kiểm tra chưa hoàn thành' });
+      return res.status(400).json({ message: "Bài kiểm tra chưa hoàn thành" });
     }
 
     // Get detailed results
@@ -163,11 +209,11 @@ const getAttemptResults = async (req, res) => {
 
     res.status(200).json({
       attempt,
-      results
+      results,
     });
   } catch (error) {
-    console.error('Get attempt results error:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error("Get attempt results error:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 
@@ -177,8 +223,64 @@ const getStudentAttempts = async (req, res) => {
 
     res.status(200).json({ attempts });
   } catch (error) {
-    console.error('Get student attempts error:', error);
-    res.status(500).json({ message: 'Lỗi server' });
+    console.error("Get student attempts error:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+};
+
+const getAttemptById = async (req, res) => {
+  try {
+    const attemptId = req.params.id;
+
+    // Kiểm tra tồn tại và quyền truy cập
+    const attempt = await Attempt.findById(attemptId);
+    if (!attempt) {
+      return res.status(404).json({ message: "Không tìm thấy lần làm bài" });
+    }
+
+    if (attempt.student_id !== req.user.id && req.user.role !== "teacher") {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền xem thông tin này" });
+    }
+
+    // Lấy thông tin bài thi
+    const exam = await Exam.findById(attempt.exam_id);
+
+    res.status(200).json({
+      attempt,
+      exam_title: exam ? exam.title : null,
+      exam_description: exam ? exam.description : null,
+    });
+  } catch (error) {
+    console.error("Get attempt by id error:", error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+};
+
+const getAttemptResponses = async (req, res) => {
+  try {
+    const attemptId = req.params.id;
+
+    // Kiểm tra tồn tại và quyền truy cập
+    const attempt = await Attempt.findById(attemptId);
+    if (!attempt) {
+      return res.status(404).json({ message: "Không tìm thấy lần làm bài" });
+    }
+
+    if (attempt.student_id !== req.user.id && req.user.role !== "teacher") {
+      return res
+        .status(403)
+        .json({ message: "Bạn không có quyền xem thông tin này" });
+    }
+
+    // Lấy danh sách câu trả lời
+    const responses = await Response.findByAttemptId(attemptId);
+
+    res.status(200).json(responses);
+  } catch (error) {
+    console.error("Get attempt responses error:", error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 
@@ -186,6 +288,8 @@ module.exports = {
   startExam,
   submitAnswer,
   completeExam,
+  getAttemptById,
   getAttemptResults,
-  getStudentAttempts
+  getAttemptResponses,
+  getStudentAttempts,
 };
