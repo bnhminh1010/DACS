@@ -292,6 +292,35 @@
           gap: 15px;
         }
       }
+
+      /* Xóa hiệu ứng đổi màu vàng khi hover vào link navbar */
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: #222;
+      }
+
+      .nav-links a.active::after,
+      .nav-links a:hover::after {
+        content: "";
+        display: block;
+        width: 60%;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
+
+      .nav-links a::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
     </style>
   </head>
   <body>
