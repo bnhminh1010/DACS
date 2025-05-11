@@ -51,7 +51,7 @@
 
       .question-number {
         font-weight: 600;
-        color: #6c63ff;
+        color: #ffb300;
         margin-bottom: 10px;
         font-size: 18px;
       }
@@ -80,12 +80,12 @@
       }
 
       .option-item:hover {
-        background-color: #f8f9fa;
+        background-color: #fff8e1;
       }
 
       .option-item.selected {
-        background-color: #e3f2fd;
-        border-color: #2196f3;
+        background-color: #fff8e1;
+        border-color: #ffb300;
       }
 
       .option-radio {
@@ -103,7 +103,7 @@
       }
 
       .nav-button {
-        background-color: #6c63ff;
+        background-color: #ffb300;
         color: white;
         border: none;
         padding: 10px 20px;
@@ -114,7 +114,7 @@
       }
 
       .nav-button:hover {
-        background-color: #5a52d5;
+        background-color: #e6a100;
       }
 
       .nav-button:disabled {
@@ -123,11 +123,11 @@
       }
 
       .submit-button {
-        background-color: #4caf50;
+        background-color: #ffb300;
       }
 
       .submit-button:hover {
-        background-color: #3e8e41;
+        background-color: #e6a100;
       }
 
       .question-navigator {
@@ -150,20 +150,21 @@
       }
 
       .question-number-box.current {
-        background-color: #6c63ff;
+        background-color: #ffb300;
         color: white;
-        border-color: #6c63ff;
+        border-color: #ffb300;
       }
 
       .question-number-box.answered {
-        background-color: #e3f2fd;
-        border-color: #2196f3;
+        background-color: #fff8e1;
+        border-color: #ffb300;
+        color: #333;
       }
 
       .timer-container {
         font-size: 18px;
         font-weight: 600;
-        color: #f44336;
+        color: #ffb300;
         display: flex;
         align-items: center;
       }
@@ -214,18 +215,89 @@
       }
 
       .modal-button.confirm {
-        background-color: #4caf50;
+        background-color: #ffb300;
         color: white;
       }
 
       .modal-button.cancel {
-        background-color: #f44336;
+        background-color: #666666;
         color: white;
       }
 
       @media (max-width: 768px) {
         .exam-meta {
           flex-direction: column;
+        }
+      }
+
+      /* Làm đẹp navbar links - đồng bộ với các trang khác */
+      .nav-links {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .nav-links a {
+        font-family: "Poppins", "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 18px;
+        color: #222;
+        text-decoration: none;
+        margin: 0 18px;
+        padding: 8px 0;
+        position: relative;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: #ffb300;
+      }
+      .nav-links a.active::after,
+      .nav-links a:hover::after {
+        content: "";
+        display: block;
+        width: 60%;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
+      .nav-links a::after {
+        content: "";
+        display: block;
+        width: 0;
+        height: 3px;
+        background: #ffb300;
+        border-radius: 2px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
+
+      /* Loading spinner */
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .loading-spinner:after {
+        content: " ";
+        display: block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 6px solid #ffb300;
+        border-color: #ffb300 transparent #ffb300 transparent;
+        animation: spinner 1.2s linear infinite;
+      }
+
+      @keyframes spinner {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
         }
       }
     </style>
@@ -299,7 +371,7 @@
           </p>
           <div
             id="unanswered-warning"
-            style="color: #f44336; margin-top: 10px; display: none"
+            style="color: #d32f2f; margin-top: 10px; display: none"
           >
             <p>
               Bạn vẫn còn <span id="unanswered-count">0</span> câu hỏi chưa trả
@@ -715,7 +787,7 @@
           // Đóng modal
           document.getElementById("completion-modal").style.display = "none";
 
-          // Hiển thị thông báo thành công
+          // Hiển thị thông báo thành công với màu sắc đồng bộ
           alert(
             `Nộp bài thành công! Điểm của bạn: ${data.score.toFixed(1)}/10`
           );
