@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kết quả bài thi - ThinkAI</title>
     <link rel="stylesheet" href="styles.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         background: #f7f9fb;
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
       }
       .result-container {
         max-width: 600px;
         margin: 48px auto;
         background: #fff;
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
         padding: 32px 32px 24px 32px;
         text-align: center;
       }
@@ -121,7 +124,9 @@
             <div class="info-value" id="correct-count">0/0</div>
           </div>
         </div>
-        <div class="result-summary" id="result-summary">Đang tải dữ liệu...</div>
+        <div class="result-summary" id="result-summary">
+          Đang tải dữ liệu...
+        </div>
         <a href="#" id="view-answer-btn" class="btn-view-answer">Xem đáp án</a>
       </div>
     </div>
@@ -162,7 +167,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const attemptId = urlParams.get("attempt_id");
         if (!attemptId) {
-          document.getElementById("result-summary").textContent = "Không tìm thấy thông tin bài làm.";
+          document.getElementById("result-summary").textContent =
+            "Không tìm thấy thông tin bài làm.";
           return;
         }
         loadResult(attemptId);
@@ -171,30 +177,74 @@
       async function loadResult(attemptId) {
         try {
           // Lấy thông tin attempt
-          const response = await fetch(`http://localhost:3000/api/attempts/${attemptId}/result`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
+          const response = await fetch(
+            `http://localhost:3000/api/attempts/${attemptId}/results`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
           if (!response.ok) throw new Error("Không thể lấy kết quả bài thi");
           const data = await response.json();
+
+          // Lấy thông tin từ đối tượng attempt
+          const attempt = data.attempt;
+          const results = data.results;
+
+          // Tính toán số câu đúng và tổng số câu hỏi
+          const totalQuestions = results.length;
+          const correctCount = results.filter(
+            (result) => result.is_correct
+          ).length;
+
+          // Tính thời gian làm bài (giây)
+          let duration = "-- giây";
+          if (attempt.start_time && attempt.end_time) {
+            const startTime = new Date(attempt.start_time);
+            const endTime = new Date(attempt.end_time);
+            const durationSeconds = Math.floor((endTime - startTime) / 1000);
+            duration = `${durationSeconds} giây`;
+          }
+
           // Hiển thị điểm
-          document.getElementById("score").textContent = `${data.score?.toFixed(1) ?? 0}/10`;
-          // Hiển thị tên thí sinh
-          document.getElementById("student-name").textContent = data.student_name || "---";
+          document.getElementById("score").textContent = `${attempt.score}/10`;
+
+          // Lấy tên thí sinh từ localStorage
+          const user = JSON.parse(localStorage.getItem("user"));
+          document.getElementById("student-name").textContent =
+            user?.fullName || user?.full_name || "---";
+
           // Hiển thị thời gian làm bài
-          document.getElementById("duration").textContent = data.duration ? `${data.duration} giây` : "-- giây";
+          document.getElementById("duration").textContent = duration;
+
           // Hiển thị số câu đúng
-          document.getElementById("correct-count").textContent = `${data.correct_count ?? 0}/${data.total_questions ?? 0}`;
+          document.getElementById("correct-count").textContent =
+            `${correctCount}/${totalQuestions}`;
+
           // Hiển thị mô tả tổng kết
-          document.getElementById("result-summary").textContent = data.summary || "Cảm ơn bạn đã hoàn thành bài thi!";
+          let summary = "Cảm ơn bạn đã hoàn thành bài thi!";
+          if (correctCount === totalQuestions) {
+            summary = "Xuất sắc! Bạn đã trả lời đúng tất cả các câu hỏi.";
+          } else if (correctCount >= totalQuestions * 0.8) {
+            summary = "Rất tốt! Bạn đã làm bài rất tốt.";
+          } else if (correctCount >= totalQuestions * 0.6) {
+            summary = "Khá tốt! Bạn đã hoàn thành bài thi với kết quả khá.";
+          } else if (correctCount >= totalQuestions * 0.4) {
+            summary = "Bạn cần cố gắng hơn nữa để cải thiện kết quả.";
+          } else {
+            summary = "Bạn cần ôn tập lại kiến thức và thử lại.";
+          }
+          document.getElementById("result-summary").textContent = summary;
+
           // Nút xem đáp án
           const viewBtn = document.getElementById("view-answer-btn");
-          viewBtn.href = `exam-answers.html?attempt_id=${attemptId}`;
+          viewBtn.href = `exam_answers.html?attempt_id=${attemptId}`;
         } catch (err) {
-          document.getElementById("result-summary").textContent = "Không thể tải kết quả. Vui lòng thử lại sau.";
+          document.getElementById("result-summary").textContent =
+            "Không thể tải kết quả. Vui lòng thử lại sau.";
         }
       }
     </script>
   </body>
-</html> 
+</html>

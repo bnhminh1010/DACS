@@ -787,14 +787,11 @@
           // Đóng modal
           document.getElementById("completion-modal").style.display = "none";
 
-          // Hiển thị thông báo thành công với màu sắc đồng bộ
-          alert(
-            `Nộp bài thành công! Điểm của bạn: ${data.score.toFixed(1)}/10`
-          );
+          // Không hiển thị alert vì sẽ chuyển sang trang kết quả
+          console.log(`Nộp bài thành công! Điểm của bạn: ${data.score.toFixed(1)}/10`);
 
-          // Chuyển hướng về trang danh sách bài thi và làm mới trang
-          window.location.href =
-            "student-assignments.html?refresh=" + new Date().getTime();
+          // Chuyển hướng đến trang kết quả bài thi với attempt_id
+          window.location.href = `testresult.html?attempt_id=${attempt.id}`;
         } catch (error) {
           console.error("Lỗi khi nộp bài thi:", error);
           alert("Không thể nộp bài thi: " + error.message);

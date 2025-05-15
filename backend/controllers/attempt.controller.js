@@ -1,15 +1,17 @@
-const Attempt = require("../models/attempt.model");
-const Response = require("../models/response.model");
-const Exam = require("../models/exam.model");
-const Question = require("../models/question.model");
+const Attempt = require("../models/attempt.model"); // Dùng khi cần tương tác dữ liệu ở bảng attempt ( bài làm )
+const Response = require("../models/response.model"); // Tương tự ở bảng respone ( câu trả lời )
+const Exam = require("../models/exam.model"); // Tương tự
+const Question = require("../models/question.model"); // Tương tự
 
 
 // Khởi tạo bài làm của sinh viên
 const startExam = async (req, res) => {
   try {
+    // Sử dụng khi cần xác định bài kiểm tra mà sinh viên muốn làm theo id
+
     const examId = req.params.id;
 
-    // Kiểm tra bài làm của sinh viên tồn tại và đã được mở 
+    // Kiểm tra bài làm của sinh viên tồn tại và đã được mở
     const exam = await Exam.findById(examId);
     if (!exam) {
       return res.status(404).json({ message: "Không tìm thấy bài kiểm tra" });
@@ -40,12 +42,12 @@ const startExam = async (req, res) => {
       });
     }
 
-    // Tạo bài làm, nếu sinh viên chưa làm 
+    // Tạo bài làm, nếu sinh viên chưa làm
     const attemptData = {
       student_id: req.user.id,
       exam_id: examId,
     };
-    // lấy id học sinh và id bài thi ra để tạo bài làm 
+    // lấy id học sinh và id bài thi ra để tạo bài làm
     const attempt = await Attempt.create(attemptData);
 
     res.status(201).json({
