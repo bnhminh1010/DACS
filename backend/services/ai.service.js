@@ -1,6 +1,6 @@
 const axios = require("axios");
-const pdf = require("pdf-parse");
-const mammoth = require("mammoth");
+const pdf = require("pdf-parse"); // Đọc file pdf
+const mammoth = require("mammoth"); // Đọc file word
 require("dotenv").config();
 
 /**

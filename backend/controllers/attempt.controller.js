@@ -3,11 +3,13 @@ const Response = require("../models/response.model");
 const Exam = require("../models/exam.model");
 const Question = require("../models/question.model");
 
+
+// Khởi tạo bài làm của sinh viên
 const startExam = async (req, res) => {
   try {
     const examId = req.params.id;
 
-    // Check if exam exists and is published
+    // Kiểm tra bài làm của sinh viên tồn tại và đã được mở 
     const exam = await Exam.findById(examId);
     if (!exam) {
       return res.status(404).json({ message: "Không tìm thấy bài kiểm tra" });
@@ -19,7 +21,7 @@ const startExam = async (req, res) => {
         .json({ message: "Bài kiểm tra này chưa được công bố" });
     }
 
-    // Check if user already has an attempt for this exam
+    // Kiểm tra sinh viên đã làm bài làm này rồi
     const existingAttempt = await Attempt.findByStudentAndExam(
       req.user.id,
       examId
@@ -30,7 +32,7 @@ const startExam = async (req, res) => {
         attemptId: existingAttempt.id,
       });
     }
-
+    // Chưa nộp bài thì tiếp tục làm tiếp
     if (existingAttempt && !existingAttempt.is_completed) {
       return res.status(200).json({
         message: "Tiếp tục làm bài kiểm tra",
@@ -38,12 +40,12 @@ const startExam = async (req, res) => {
       });
     }
 
-    // Create new attempt
+    // Tạo bài làm, nếu sinh viên chưa làm 
     const attemptData = {
       student_id: req.user.id,
       exam_id: examId,
     };
-
+    // lấy id học sinh và id bài thi ra để tạo bài làm 
     const attempt = await Attempt.create(attemptData);
 
     res.status(201).json({
@@ -55,6 +57,7 @@ const startExam = async (req, res) => {
     res.status(500).json({ message: "Lỗi server" });
   }
 };
+
 
 const submitAnswer = async (req, res) => {
   try {

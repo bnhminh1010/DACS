@@ -1,6 +1,7 @@
 const db = require('../config/db');
 
 const Response = {
+  // Tạo câu trả lời của sinh viên
   create: async (responseData) => {
     const { attempt_id, question_id, option_id } = responseData;
 
@@ -19,7 +20,7 @@ const Response = {
       throw error;
     }
   },
-
+  // Lấy bài kiểm tra theo id
   findByAttemptId: async (attemptId) => {
     const query = `
       SELECT r.*, q.content as question_content, o.content as option_content, o.is_correct
@@ -36,7 +37,7 @@ const Response = {
       throw error;
     }
   },
-
+  // Lấy kết quả bài kiểm tra 
   getAttemptResults: async (attemptId) => {
     const query = `
       SELECT 
