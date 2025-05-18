@@ -35,6 +35,50 @@
         font-weight: bold;
         color: #6c63ff;
       }
+
+      /* Styles cho button group và dropdown */
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      /* Dropdown styles */
+      .dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-toggle {
+        cursor: pointer;
+      }
+
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+
+      .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        transition: background-color 0.2s;
+      }
+
+      .dropdown-content a:hover {
+        background-color: #f1f1f1;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
     </style>
   </head>
   <body>
@@ -69,7 +113,25 @@
               <p>Định dạng được hỗ trợ: PDF, DOC, DOCX</p>
               <p>Kích thước tối đa: 5MB</p>
             </div>
-            <button type="submit" class="btn btn-primary">Tải lên</button>
+            <div class="button-group">
+              <button type="submit" class="btn btn-primary">Tải lên</button>
+              <div class="dropdown">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle"
+                  id="specialtyBtn"
+                >
+                  Chuyên môn
+                </button>
+                <div class="dropdown-content">
+                  <a href="#">Toán học</a>
+                  <a href="#">Vật lý</a>
+                  <a href="#">Hóa học</a>
+                  <a href="#">Lập trình</a>
+                  <a href="#">Khác</a>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
 
@@ -475,6 +537,14 @@
 
         // Xử lý sự kiện tạo bài tập
         createExamButton.onclick = async () => {
+          // Hiển thị hộp thoại xác nhận
+          const isConfirmed = confirm("Bạn chắc chắn muốn tạo bài tập ?");
+
+          // Nếu người dùng không xác nhận, dừng xử lý
+          if (!isConfirmed) {
+            return;
+          }
+
           try {
             const token = localStorage.getItem("token");
             if (!token) {
