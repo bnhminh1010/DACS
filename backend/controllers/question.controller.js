@@ -15,9 +15,14 @@ const questionController = {
       const base64Content = req.file.buffer.toString("base64");
 
       // Gọi service để tạo câu hỏi
+      const specialty = req.body.specialty || req.fields?.specialty || "math";
+      const difficulty =
+        req.body.difficulty || req.fields?.difficulty || "easy";
       const questions = await aiService.generateQuestions(
         req.file.originalname,
-        base64Content
+        base64Content,
+        specialty,
+        difficulty
       );
 
       res.json(questions);

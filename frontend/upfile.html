@@ -131,6 +131,20 @@
                   <a href="#">Khác</a>
                 </div>
               </div>
+              <div class="dropdown">
+                <button
+                  type="button"
+                  class="btn btn-secondary dropdown-toggle"
+                  id="difficultyBtn"
+                >
+                  Độ khó
+                </button>
+                <div class="dropdown-content" id="difficultyDropdown">
+                  <a href="#">Dễ</a>
+                  <a href="#">Trung bình</a>
+                  <a href="#">Khó</a>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -199,6 +213,8 @@
       const fileInput = document.getElementById("fileInput");
       const fileList = document.getElementById("fileList");
       let uploadedFiles = [];
+      let selectedSpecialty = "other"; // Mặc định
+      let selectedDifficulty = "easy"; // Mặc định
 
       // Load danh sách file đã upload từ localStorage
       function loadUploadedFiles() {
@@ -346,6 +362,8 @@
               // Tạo FormData
               const formData = new FormData();
               formData.append("file", fileFromBlob);
+              formData.append("specialty", selectedSpecialty);
+              formData.append("difficulty", selectedDifficulty);
 
               // Gọi API để tạo câu hỏi
               const token = localStorage.getItem("token");
@@ -403,6 +421,20 @@
 
       // Hàm hiển thị modal chứa câu hỏi
       function showQuestionsModal(questions) {
+        // Xác định model đang sử dụng
+        let modelName = "Google Gemini";
+        if (selectedSpecialty === "math") {
+          modelName = "Mistral-7B Instruct (OpenRouter)";
+        } else if (selectedSpecialty === "physics") {
+          modelName = "DeepHermes-3 Mistral 24B (OpenRouter)";
+        } else if (selectedSpecialty === "chemistry") {
+          modelName = "Phi-4 Reasoning Plus (OpenRouter)";
+        } else if (selectedSpecialty === "programming") {
+          modelName = "DeepSeek Prover V2 (OpenRouter)";
+        } else if (selectedSpecialty === "other") {
+          modelName = "Google Gemini";
+        }
+
         // Tạo modal container
         const modalContainer = document.createElement("div");
         modalContainer.className = "modal-container";
@@ -431,6 +463,12 @@
           overflow-y: auto;
           position: relative;
         `;
+
+        // Thông báo model
+        const modelInfo = document.createElement("div");
+        modelInfo.style.cssText =
+          "margin-bottom: 10px; color: #6c63ff; font-weight: 600; font-size: 1.1em;";
+        modelInfo.innerHTML = `Đang sử dụng AI Model: <span style='color:#f4c542'>${modelName}</span>`;
 
         // Tạo nút đóng
         const closeButton = document.createElement("button");
@@ -490,6 +528,7 @@
 
         modalContent.innerHTML = `
           <h2 style="margin-bottom: 20px;">Câu hỏi được tạo</h2>
+          ${modelInfo.outerHTML}
           ${questionsHtml}
         `;
 
@@ -636,6 +675,44 @@
           console.error("Chi tiết lỗi:", error);
           alert("Có lỗi xảy ra khi lưu tệp: " + error.message);
         }
+      });
+
+      document.querySelectorAll(".dropdown-content a").forEach((item) => {
+        item.addEventListener("click", function (e) {
+          if (this.parentElement.parentElement.querySelector("#specialtyBtn")) {
+            e.preventDefault();
+            selectedSpecialty =
+              this.textContent === "Khác"
+                ? "other"
+                : this.textContent === "Toán học"
+                  ? "math"
+                  : this.textContent === "Vật lý"
+                    ? "physics"
+                    : this.textContent === "Hóa học"
+                      ? "chemistry"
+                      : this.textContent === "Lập trình"
+                        ? "programming"
+                        : "other";
+            document.getElementById("specialtyBtn").textContent =
+              this.textContent;
+          }
+        });
+      });
+
+      document.querySelectorAll("#difficultyDropdown a").forEach((item) => {
+        item.addEventListener("click", function (e) {
+          e.preventDefault();
+          selectedDifficulty =
+            this.textContent === "Dễ"
+              ? "easy"
+              : this.textContent === "Trung bình"
+                ? "medium"
+                : this.textContent === "Khó"
+                  ? "hard"
+                  : "easy";
+          document.getElementById("difficultyBtn").textContent =
+            this.textContent;
+        });
       });
     </script>
   </body>
