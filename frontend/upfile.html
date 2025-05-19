@@ -435,6 +435,13 @@
           modelName = "Google Gemini";
         }
 
+        let difficultyLevel = "Dễ";
+        if (selectedDifficulty === "medium") {
+          difficultyLevel = "Trung bình";
+        } else if (selectedDifficulty === "hard") {
+          difficultyLevel = "Khó";
+        }
+
         // Tạo modal container
         const modalContainer = document.createElement("div");
         modalContainer.className = "modal-container";
@@ -469,6 +476,12 @@
         modelInfo.style.cssText =
           "margin-bottom: 10px; color: #6c63ff; font-weight: 600; font-size: 1.1em;";
         modelInfo.innerHTML = `Đang sử dụng AI Model: <span style='color:#f4c542'>${modelName}</span>`;
+
+        // Thông báo độ khó
+        const difficultyInfo = document.createElement("div");
+        difficultyInfo.style.cssText =
+          "margin-bottom: 10px; color: #6c63ff; font-weight: 600; font-size: 1.1em;";
+        difficultyInfo.innerHTML = `Độ khó : <span style='color:#f4c542'>${difficultyLevel}</span>`;
 
         // Tạo nút đóng
         const closeButton = document.createElement("button");
@@ -529,6 +542,7 @@
         modalContent.innerHTML = `
           <h2 style="margin-bottom: 20px;">Câu hỏi được tạo</h2>
           ${modelInfo.outerHTML}
+          ${difficultyInfo.outerHTML}
           ${questionsHtml}
         `;
 
