@@ -54,6 +54,7 @@ const generateQuestions = async (
   fileContent,
   specialty = "math",
   difficulty = "easy"
+
 ) => {
   try {
     console.log("Bắt đầu xử lý file:", fileName);
@@ -65,10 +66,10 @@ const generateQuestions = async (
 
     // Map specialty sang model OpenRouter
     const openRouterModels = {
-      math: "mistralai/mistral-7b-instruct:free",
-      physics: "nousresearch/deephermes-3-mistral-24b-preview:free",
-      chemistry: "microsoft/phi-4-reasoning-plus:free",
-      programming: "deepseek/deepseek-prover-v2:free",
+      math: "mistralai/devstral-small:free",
+      physics: "deepseek/deepseek-r1:free",
+      chemistry: "mistralai/mistral-7b-instruct:free",
+      programming: "qwen/qwen-2.5-coder-32b-instruct:free",
     };
 
     // Map difficulty sang tiếng Việt cho prompt
@@ -78,6 +79,7 @@ const generateQuestions = async (
       hard: "khó",
     };
     const difficultyText = difficultyMap[difficulty] || "dễ";
+    
 
     if (specialty in openRouterModels) {
       // Gọi OpenRouter API với model tương ứng
@@ -85,8 +87,12 @@ const generateQuestions = async (
         throw new Error("Thiếu cấu hình OpenRouter API");
       }
       const apiUrl = process.env.OPENROUTER_API_URL;
-      const prompt = `Bạn là một trợ lý học tập thông minh. Hãy tạo 5 câu hỏi trắc nghiệm độ khó: ${difficultyText} từ nội dung sau:\n"${textContent}"\nMỗi câu hỏi có định dạng JSON như sau:\n{\n  "question": "...",\n  "explanation": "...",\n  "options": [\n    { "text": "...", "is_correct": true/false },\n    ...\n  ]\n}\nChỉ trả về một mảng JSON chứa 5 câu hỏi như ví dụ trên.`;
+      const prompt = `\nBạn là một trợ lý học tập thông minh. 
+                      Hãy tạo 5 câu hỏi trắc nghiệm độ khó: ${difficultyText} từ nội dung sau:\n\n"${textContent}"\n
+                      \nMỗi câu hỏi có định dạng JSON như sau:\n{\n  "question": "...",\n  "explanation": "...",\n  "options": [\n    { "text": "...", "is_correct": true/false },\n    ...\n  ]\n}\n
+                      \nChỉ trả về một mảng JSON chứa 5 câu hỏi như ví dụ trên.\n`;
       try {
+        
         const response = await axios.post(
           apiUrl,
           {
@@ -114,12 +120,20 @@ const generateQuestions = async (
         const rawText =
           response.data?.choices?.[0]?.message?.content ||
           response.data?.completion;
+
         if (!rawText) {
           throw new Error(
             "Không tìm thấy nội dung trong phản hồi từ OpenRouter API"
           );
         }
-        const cleanText = rawText.replace(/```json\n?|```/g, "").trim();
+
+        const cleanText = rawText
+          .replace(/```(json)?\n?/gi, "")
+          .replace(/^[^\[{]*([\[{])/s, "$1")
+          .replace(/([\]}])[^}\]]*$/s, "$1")
+          .replace(/(?:\\n)+/g, "\n")
+          .trim();
+
         const questions = JSON.parse(cleanText);
         if (!Array.isArray(questions)) {
           throw new Error("Dữ liệu không đúng định dạng mảng");

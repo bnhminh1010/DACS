@@ -208,7 +208,12 @@
           window.location.href = "login.html";
         }
       });
-
+      const teacherProfileBtn = document.getElementById("teacher-profile-btn");
+      if (teacherProfileBtn) {
+        teacherProfileBtn.onclick = function () {
+          window.location.href = "teacher-assignments.html";
+        };
+      }
       const uploadForm = document.getElementById("uploadForm");
       const fileInput = document.getElementById("fileInput");
       const fileList = document.getElementById("fileList");
@@ -424,15 +429,16 @@
         // Xác định model đang sử dụng
         let modelName = "Google Gemini";
         if (selectedSpecialty === "math") {
-          modelName = "Mistral-7B Instruct (OpenRouter)";
+          modelName = "Mistral: Devstral Small (free) ( Newest )";
         } else if (selectedSpecialty === "physics") {
-          modelName = "DeepHermes-3 Mistral 24B (OpenRouter)";
+          modelName = "DeepSeek: R1 (free) ( 2nd Top weekly)";
         } else if (selectedSpecialty === "chemistry") {
-          modelName = "Phi-4 Reasoning Plus (OpenRouter)";
+          modelName =
+            "Mistral: Mistral 7B Instruct (free) ( 2nd Lowest Latency )";
         } else if (selectedSpecialty === "programming") {
           modelName = "DeepSeek Prover V2 (OpenRouter)";
         } else if (selectedSpecialty === "other") {
-          modelName = "Google Gemini";
+          modelName = "Google Gemini ( 1st Context length )";
         }
 
         let difficultyLevel = "Dễ";
