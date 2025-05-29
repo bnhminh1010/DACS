@@ -1,0 +1,139 @@
+[2025-05-29T13:24:07.331Z]
+Model: mistralai/devstral-small:free
+File: Lá»i bÃ i hÃ¡t ChÃºng ta cá»§a hiá»n táº¡i.docx
+Specialty: math
+Difficulty: easy
+Input length: 1900
+Response time: 9001ms
+Questions: 5
+Errors: 0
+Summary: OK
+Raw preview: ```json
+[
+  {
+    "question": "Mùa thu mang gì quay về?",
+    "explanation": "Đoạn này đề cập đến mùa thu mang lại giấc mơ.",
+    "options": [
+      { "text": "Giấc mơ", "is_correct": true },
+      { "text": "Gió", "is_correct": false },
+      { "text": "Mưa", "is_correct": false },
+      { "text": "Nắng", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Lá bay theo gì?",
+    "explanation": "Lá bay theo gió xôn xao.",
+    "options": [
+      { "text": "Gió", "is_correct": true },
+      { "text": "Mưa", "is_correct": false },
+      { "text": "Nắng", "is_correct": false },
+      { "text": "Sương", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Chúng ta là gì trên trời?",
+    "explanation": "Chúng ta là áng mây trên trời.",
+    "options": [
+      { "text": "Áng mây", "is_correct": true },
+      { "text": "Gió", "is_correct": false },
+      { "text": "Mưa", "is_correct": false },
+      { "text": "Nắng", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Anh nguyện ghi mãi gì trong tim?",
+    "explanation": "Anh nguyện ghi mãi trong tim.",
+    "options": [
+      { "text": "Điều anh luôn giữ kín", "is_correct": true },
+      { "text": "Giấc mơ", "is_correct": false },
+      { "text": "Câu thề", "is_correct": false },
+      { "text": "Dấu yêu", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Điều anh luôn giữ kín trong tim là gì?",
+    "explanation": "Điều anh luôn giữ kín trong tim là thương em.",
+    "options": [
+      { "text": "Thương em", "is_correct": true },
+      { "text": "Giấc mơ", "is_correct": false },
+      { "text": "Câu thề", "is_correct": false },
+      { "text": "Dấu yêu", "is_correct": false }
+    ]
+  }
+]
+```
+[2025-05-29T13:26:15.957Z]
+Model: Gemini
+File: Lá»i bÃ i hÃ¡t ChÃºng ta cá»§a hiá»n táº¡i.docx
+Specialty: other
+Difficulty: easy
+Input length: 1900
+Response time: 5020ms
+Questions: 5
+Errors: 0
+Summary: OK
+Raw preview: ```json
+[
+  {
+    "question": "Trong bài hát, mùa nào được nhắc đến đầu tiên?",
+    "explanation": "Câu hát đầu tiên là 'Mùa thu mang giấc mơ quay về'.",
+    "options": [
+      { "text": "Mùa thu", "is_correct": true },
+      { "text": "Mùa đông", "is_correct": false },
+      { "text": "Mùa hạ", "is_correct": false },
+      { "text": "Mùa xuân", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Trong bài hát, 'chúng ta' được so sánh với hình ảnh nào?",
+    "explanation": "Bài hát có câu 'Chúng ta... là áng mây trên trời vội vàng ngang qua'.",
+    "options": [
+      { "text": "Áng mây trên trời", "is_correct": true },
+      { "text": "Những vì sao", "is_correct": false },
+      { "text": "Cơn mưa rào", "is_correct": false },
+      { "text": "Cánh đồng lúa", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Bài hát thể hiện cảm xúc gì chủ yếu?",
+    "explanation": "Bài hát thể hiện sự tiếc nuối, chia ly và tình cảm sâu kín.",
+    "options": [
+      { "text": "Buồn bã, tiếc nuối", "is_correct": true },
+      { "text": "Vui vẻ, hạnh phúc", "is_correct": false },
+      { "text": "Giận dữ, oán trách", "is_correct": false },
+      { "text": "Bình thản, thờ ơ", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Điều gì được 'anh' giữ kín trong tim?",
+    "explanation": "Điệp khúc lặp đi lặp lại là 'Điều anh luôn giữ kín trong tim... Thương em'.",
+    "options": [
+      { "text": "Tình thương dành cho 'em'", "is_correct": true },
+      { "text": "Nỗi hận thù", "is_correct": false },
+      { "text": "Bí mật về tương lai", "is_correct": false },
+      { "text": "Những kỷ niệm vui vẻ", "is_correct": false }
+    ]
+  },
+  {
+    "question": "Trong bài hát, 'lá' làm gì?",
+    "explanation": "Lời bài hát có câu 'Lá bay theo gió xôn xao chốn xưa anh chờ'.",
+    "options": [
+      { "text": "Bay theo gió", "is_correct": true },
+      { "text": "Rơi xuống đất", "is_correct": false },
+      { "text": "Nảy mầm", "is_correct": false },
+      { "text": "Đổi màu", "is_correct": false }
+    ]
+  }
+]
+```
+[2025-05-29T13:32:10.597Z]
+Model: mistralai/mistral-7b-instruct:free
+File: Lá»i bÃ i hÃ¡t ChÃºng ta cá»§a hiá»n táº¡i.docx
+Specialty: undefined
+Difficulty: undefined
+Input length: undefined
+Response time: undefinedms
+Questions: undefined
+Errors: undefined
+Summary: undefined
+Raw preview: 
