@@ -1,0 +1,80 @@
+# Tổng quan kiến trúc backend Node.js/Express
+
+## 1. config
+- Chứa các file cấu hình chung cho toàn bộ ứng dụng (kết nối DB, thông tin bảo mật, tham số hệ thống, biến môi trường...)
+- Được các thành phần khác import để lấy thông tin cấu hình.
+- Giúp dễ dàng thay đổi thông tin mà không phải sửa code logic.
+- Ví dụ: `config/database.js`, `config/auth.js`.
+
+## 2. models
+- Định nghĩa cấu trúc dữ liệu, mapping với bảng trong database (ORM hoặc tự viết).
+- Là “hợp đồng” cho dữ liệu: mỗi entity (User, Exam, Question, Attempt, ...) sẽ có một model.
+- Được services sử dụng để thao tác với database.
+- Ví dụ: `models/user.model.js`.
+
+## 3. services
+- Chứa toàn bộ logic nghiệp vụ, thao tác với database thông qua models.
+- Nhận dữ liệu từ controller, xử lý nghiệp vụ (tính toán, validate, truy vấn DB), trả về kết quả hoặc lỗi.
+- Tách biệt logic nghiệp vụ khỏi controller giúp code dễ test, dễ bảo trì.
+- Ví dụ: `services/user.service.js`.
+
+## 4. controllers
+- Là cầu nối giữa routes và services.
+- Nhận request từ routes, đọc params/body, gọi service tương ứng.
+- Xử lý kết quả/trả lỗi về cho client (thường là JSON).
+- Không chứa logic nghiệp vụ phức tạp, chỉ điều phối luồng dữ liệu.
+- Ví dụ: `controllers/user.controller.js`.
+
+## 5. routes
+- Định nghĩa các endpoint API, gắn middleware và controller cho từng endpoint.
+- Xác định URL, method (GET/POST/PUT/DELETE...) và thứ tự middleware.
+- Điều hướng request tới controller phù hợp.
+- Ví dụ: `routes/user.routes.js`.
+
+## 6. middlewares
+- Các hàm chạy trước hoặc sau controller, xử lý các tác vụ chung (auth, validate, log, bắt lỗi...)
+- Bảo vệ API (auth, phân quyền), xử lý dữ liệu đầu vào (validate, parse), log, bắt lỗi, xử lý CORS...
+- Ví dụ: `middlewares/auth.middleware.js`, `middlewares/upload.middleware.js`.
+
+## 7. utils
+- Chứa các hàm tiện ích dùng chung cho nhiều nơi (format date, tạo random string, hash password...)
+- Giúp code DRY, không lặp lại logic nhỏ ở nhiều nơi.
+- Ví dụ: `utils/hash.js`, `utils/formatDate.js`.
+
+---
+
+## Luồng xử lý tổng thể
+
+1. Client gửi request
+2. routes nhận request, kiểm tra method + URL →
+3. middlewares (nếu có: auth, validate, log, ...) chạy trước
+4. controller nhận request, đọc dữ liệu, gọi service
+5. service xử lý nghiệp vụ, thao tác với model (DB)
+6. service trả kết quả cho controller
+7. controller trả response về cho client
+8. Nếu có lỗi, chuyển sang middleware xử lý lỗi
+9. utils có thể được dùng ở bất kỳ đâu để xử lý logic nhỏ, lặp lại
+
+---
+
+## Ví dụ minh họa luồng xử lý
+
+**Client gửi POST /api/auth/login**
+- `routes/auth.routes.js`: định nghĩa route `/login`, gắn controller `login`
+- `middlewares/auth.middleware.js`: nếu cần, kiểm tra token
+- `controllers/auth.controller.js`: nhận req, gọi `authService.login`
+- `services/auth.service.js`: kiểm tra user, so khớp password, tạo JWT
+- `models/user.model.js`: truy vấn DB lấy user
+- `utils/hash.js`: so khớp password
+- Kết quả trả về controller → response về client
+
+---
+
+**Tóm lại:**
+- config: cấu hình chung
+- routes: định nghĩa endpoint, gắn middleware, controller
+- middlewares: xử lý chung trước/sau controller
+- controllers: nhận request, gọi service, trả response
+- services: xử lý nghiệp vụ, thao tác DB qua model
+- models: định nghĩa cấu trúc dữ liệu, mapping DB
+- utils: hàm tiện ích dùng chung

@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xem đáp án - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .exam-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .exam-header {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .exam-header h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .exam-meta {
+        color: #666;
+        margin-bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+
+      .exam-meta div {
+        margin-bottom: 10px;
+      }
+
+      .question-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .question-number {
+        font-weight: 600;
+        color: #ffb300;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .question-content {
+        margin-bottom: 20px;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .options-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .option-item {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s ease;
+      }
+
+      .option-item.selected {
+        background-color: #fff8e1;
+        border-color: #ffb300;
+      }
+
+      .option-item.correct {
+        background-color: #e8f5e9;
+        border-color: #4caf50;
+      }
+
+      .option-item.incorrect {
+        background-color: #ffebee;
+        border-color: #f44336;
+      }
+
+      .option-radio {
+        margin-right: 15px;
+      }
+
+      .option-content {
+        flex-grow: 1;
+      }
+
+      .navigation-container {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+      }
+
+      .nav-button {
+        background-color: #ffb300;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+      }
+
+      .nav-button:hover {
+        background-color: #e6a100;
+      }
+
+      .nav-button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+
+      .question-navigator {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .question-number-box {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .question-number-box.current {
+        background-color: #ffb300;
+        color: white;
+        border-color: #ffb300;
+      }
+
+      .question-number-box.correct {
+        background-color: #e8f5e9;
+        border-color: #4caf50;
+        color: #333;
+      }
+
+      .question-number-box.incorrect {
+        background-color: #ffebee;
+        border-color: #f44336;
+        color: #333;
+      }
+
+      .answer-summary {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+      }
+
+      .answer-summary-title {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 16px;
+      }
+
+      .answer-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .answer-label {
+        width: 120px;
+        font-weight: 500;
+        color: #555;
+      }
+
+      .answer-content {
+        flex-grow: 1;
+      }
+
+      .answer-content.correct {
+        color: #4caf50;
+        font-weight: 500;
+      }
+
+      .answer-content.incorrect {
+        color: #f44336;
+        font-weight: 500;
+      }
+
+      .explanation-box {
+        background-color: #f5f5f5;
+        border-left: 4px solid #ffb300;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 0 4px 4px 0;
+      }
+
+      .explanation-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .explanation-content {
+        color: #555;
+      }
+
+      .result-summary {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .result-score {
+        font-size: 18px;
+        font-weight: 600;
+        color: #ffb300;
+      }
+
+      .result-details {
+        display: flex;
+        gap: 20px;
+      }
+
+      .result-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .correct-indicator {
+        width: 12px;
+        height: 12px;
+        background-color: #4caf50;
+        border-radius: 50%;
+      }
+
+      .incorrect-indicator {
+        width: 12px;
+        height: 12px;
+        background-color: #f44336;
+        border-radius: 50%;
+      }
+
+      .back-button {
+        background-color: #f0f0f0;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 10px;
+      }
+
+      .back-button:hover {
+        background-color: #e0e0e0;
+      }
+
+      /* Làm đẹp navbar links - đồng bộ với các trang khác */
+      .nav-links {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .nav-links a {
+        font-family: "Poppins", "Inter", sans-serif;
+        font-weight: 500;
+        color: #333;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: background-color 0.2s;
+      }
+      .nav-links a:hover {
+        background-color: #f5f5f5;
+      }
+      .nav-links a.active {
+        color: #ffb300;
+        position: relative;
+      }
+      .nav-links a.active::after {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 3px;
+        background-color: #ffb300;
+        border-radius: 3px;
+        margin: 4px auto 0 auto;
+        transition: width 0.3s;
+      }
+
+      /* Loading spinner */
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 200px;
+      }
+
+      .loading-spinner:after {
+        content: " ";
+        display: block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 6px solid #ffb300;
+        border-color: #ffb300 transparent #ffb300 transparent;
+        animation: spinner 1.2s linear infinite;
+      }
+
+      @keyframes spinner {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <div class="nav-links">
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="auth-links" id="auth-links"></div>
+      </nav>
+
+      <div class="exam-container">
+        <div class="exam-header">
+          <h2 id="exam-title">Đang tải bài thi...</h2>
+          <div class="exam-meta">
+            <div id="exam-details">
+              <p>
+                <strong>Người tạo:</strong> <span id="exam-author">Đang tải...</span>
+              </p>
+              <p>
+                <strong>Mô tả:</strong> <span id="exam-description">không có mô tả</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-summary">
+          <div class="result-score">
+            Điểm số: <span id="exam-score">0/10</span>
+          </div>
+          <div class="result-details">
+            <div class="result-detail-item">
+              <div class="correct-indicator"></div>
+              <span>Đúng: <span id="correct-count">0</span></span>
+            </div>
+            <div class="result-detail-item">
+              <div class="incorrect-indicator"></div>
+              <span>Sai: <span id="incorrect-count">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="question-navigator" id="question-navigator">
+          <!-- Các số câu hỏi sẽ được thêm vào đây bằng JavaScript -->
+        </div>
+
+        <div id="loading-container" class="loading-spinner"></div>
+
+        <div id="question-container" class="question-container" style="display: none;">
+          <div class="question-number" id="question-number">Câu hỏi 1</div>
+          <div class="question-content" id="question-content">
+            Đang tải câu hỏi...
+          </div>
+          <ul class="options-list" id="options-list">
+            <!-- Các phương án sẽ được thêm vào đây bằng JavaScript -->
+          </ul>
+          
+          <div class="answer-summary" id="answer-summary">
+            <div class="answer-summary-title">Kết quả trả lời:</div>
+            <div class="answer-item">
+              <div class="answer-label">Bạn đã chọn:</div>
+              <div class="answer-content" id="user-answer">Chưa có câu trả lời</div>
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Đáp án đúng:</div>
+              <div class="answer-content correct" id="correct-answer">Đang tải đáp án...</div>
+            </div>
+            <div class="answer-item">
+              <div class="answer-label">Trạng thái:</div>
+              <div class="answer-content" id="answer-status">Đang tải...</div>
+            </div>
+          </div>
+          
+          <div class="explanation-box" id="explanation-box">
+            <div class="explanation-title">Giải thích:</div>
+            <div class="explanation-content" id="explanation-content">
+              Đang tải giải thích...
+            </div>
+          </div>
+        </div>
+
+        <div class="navigation-container">
+          <div>
+            <a href="testresult.html" class="back-button" id="back-button">Quay lại kết quả</a>
+          </div>
+          <div>
+            <button id="prev-button" class="nav-button" disabled>
+              Câu trước
+            </button>
+            <button id="next-button" class="nav-button">Câu tiếp theo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Hiển thị tên người dùng và nút đăng xuất giống trang Upfile
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        if (!token || !userString) {
+          window.location.href = "login.html";
+          return;
+        }
+        try {
+          const user = JSON.parse(userString);
+          const authLinks = document.getElementById("auth-links");
+          if (authLinks) {
+            authLinks.innerHTML = `
+              <span class="btn btn-primary" style="background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;font-size:20px;line-height:40px;height:48px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;">${user.fullName || user.full_name || user.email}</span>
+              <button id="logout-button" class="btn btn-secondary" style="margin-left:10px;height:48px;min-width:140px;font-size:20px;font-weight:500;border-radius:12px;">Đăng xuất</button>
+            `;
+          }
+          setTimeout(() => {
+            const logoutButton = document.getElementById("logout-button");
+            if (logoutButton) {
+              logoutButton.onclick = function () {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "home.html";
+              };
+            }
+          }, 100);
+        } catch (error) {
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        }
+
+        // Lấy attempt_id từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const attemptId = urlParams.get("attempt_id");
+        if (!attemptId) {
+          alert("Không tìm thấy thông tin bài làm");
+          window.location.href = "student-assignments.html";
+          return;
+        }
+
+        // Biến toàn cục để lưu trữ dữ liệu
+        let examData = null;
+        let currentQuestionIndex = 0;
+
+        // Tải dữ liệu bài thi và kết quả
+        loadExamResults(attemptId);
+
+        // Thiết lập sự kiện cho các nút điều hướng
+        document.getElementById("prev-button").addEventListener("click", () => {
+          if (currentQuestionIndex > 0) {
+            displayQuestion(currentQuestionIndex - 1);
+          }
+        });
+
+        document.getElementById("next-button").addEventListener("click", () => {
+          if (examData && currentQuestionIndex < examData.results.length - 1) {
+            displayQuestion(currentQuestionIndex + 1);
+          }
+        });
+
+        // Cập nhật nút quay lại kết quả
+        document.getElementById("back-button").href = `testresult.html?attempt_id=${attemptId}`;
+
+        // Hàm tải dữ liệu bài thi và kết quả
+        async function loadExamResults(attemptId) {
+          try {
+            // Hiển thị loading spinner
+            document.getElementById("loading-container").style.display = "flex";
+            document.getElementById("question-container").style.display = "none";
+
+            // Lấy thông tin attempt
+            const response = await fetch(`http://localhost:3000/api/attempts/${attemptId}/results`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error("Không thể lấy kết quả bài thi");
+            }
+
+            const data = await response.json();
+            examData = data;
+
+            // Lấy thông tin bài thi
+            const examResponse = await fetch(`http://localhost:3000/api/exams/${data.attempt.exam_id}`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            });
+
+            if (!examResponse.ok) {
+              throw new Error("Không thể lấy thông tin bài thi");
+            }
+
+            const examInfo = await examResponse.json();
+
+            // Cập nhật thông tin bài thi
+            document.getElementById("exam-title").textContent = examInfo.title || "Bài thi không có tiêu đề";
+            document.getElementById("exam-author").textContent = examInfo.teacher_name || "Giáo viên";
+            document.getElementById("exam-description").textContent = examInfo.description || "không có mô tả";
+
+            // Cập nhật thông tin kết quả
+            const correctCount = data.results.filter(result => result.is_correct).length;
+            const incorrectCount = data.results.length - correctCount;
+
+            document.getElementById("exam-score").textContent = `${data.attempt.score}/10`;
+            document.getElementById("correct-count").textContent = correctCount;
+            document.getElementById("incorrect-count").textContent = incorrectCount;
+
+            // Tạo các số câu hỏi
+            createQuestionNumbers(data.results);
+
+            // Hiển thị câu hỏi đầu tiên
+            if (data.results.length > 0) {
+              displayQuestion(0);
+            }
+
+            // Ẩn loading spinner
+            document.getElementById("loading-container").style.display = "none";
+            document.getElementById("question-container").style.display = "block";
+          } catch (error) {
+            console.error("Lỗi khi tải dữ liệu:", error);
+            alert("Không thể tải dữ liệu bài thi: " + error.message);
+          }
+        }
+
+        // Hàm tạo các số câu hỏi
+        function createQuestionNumbers(results) {
+          const container = document.getElementById("question-navigator");
+          container.innerHTML = "";
+
+          results.forEach((result, index) => {
+            const box = document.createElement("div");
+            box.className = `question-number-box ${result.is_correct ? "correct" : "incorrect"}`;
+            box.textContent = index + 1;
+            box.addEventListener("click", () => displayQuestion(index));
+            container.appendChild(box);
+          });
+        }
+
+        // Hàm hiển thị câu hỏi
+        function displayQuestion(index) {
+          if (!examData || !examData.results || index < 0 || index >= examData.results.length) {
+            return;
+          }
+
+          currentQuestionIndex = index;
+          const question = examData.results[index];
+
+          // Cập nhật số câu hỏi hiện tại
+          document.querySelectorAll(".question-number-box").forEach((box, i) => {
+            box.classList.toggle("current", i === index);
+          });
+
+          // Cập nhật nội dung câu hỏi
+          document.getElementById("question-number").textContent = `Câu hỏi ${index + 1}`;
+          document.getElementById("question-content").textContent = question.question_content;
+
+          // Lấy danh sách các phương án
+          fetchOptions(question.question_id, question.selected_option_id, question.correct_option_id);
+          
+          // Cập nhật phần giải thích
+          document.getElementById("explanation-content").textContent = question.explanation || "Không có giải thích cho câu hỏi này.";
+          
+          // Cập nhật thông tin đáp án
+          updateAnswerSummary(question);
+
+          // Cập nhật trạng thái nút điều hướng
+          updateNavigationButtons();
+        }
+        
+        // Hàm cập nhật thông tin đáp án
+        function updateAnswerSummary(question) {
+          const userAnswerElement = document.getElementById("user-answer");
+          const correctAnswerElement = document.getElementById("correct-answer");
+          const answerStatusElement = document.getElementById("answer-status");
+          
+          // Lấy thông tin đáp án từ câu hỏi
+          if (question.selected_option_content) {
+            userAnswerElement.textContent = question.selected_option_content;
+            userAnswerElement.className = question.is_correct ? "answer-content correct" : "answer-content incorrect";
+          } else {
+            userAnswerElement.textContent = "Không trả lời";
+            userAnswerElement.className = "answer-content";
+          }
+          
+          correctAnswerElement.textContent = question.correct_option_content || "Đang tải...";
+          
+          if (question.selected_option_id) {
+            if (question.is_correct) {
+              answerStatusElement.textContent = "Đúng";
+              answerStatusElement.className = "answer-content correct";
+            } else {
+              answerStatusElement.textContent = "Sai";
+              answerStatusElement.className = "answer-content incorrect";
+            }
+          } else {
+            answerStatusElement.textContent = "Không trả lời";
+            answerStatusElement.className = "answer-content";
+          }
+        }
+
+        // Hàm lấy danh sách các phương án
+        async function fetchOptions(questionId, selectedOptionId, correctOptionId) {
+          try {
+            const response = await fetch(`http://localhost:3000/api/questions/${questionId}/options`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error("Không thể lấy danh sách phương án");
+            }
+
+            const options = await response.json();
+            renderOptions(options, selectedOptionId, correctOptionId);
+          } catch (error) {
+            console.error("Lỗi khi lấy danh sách phương án:", error);
+          }
+        }
+
+        // Hàm hiển thị danh sách các phương án
+        function renderOptions(options, selectedOptionId, correctOptionId) {
+          const container = document.getElementById("options-list");
+          container.innerHTML = "";
+
+          options.forEach(option => {
+            const li = document.createElement("li");
+            const isSelected = option.id === selectedOptionId;
+            const isCorrect = option.id === correctOptionId;
+
+            // Xác định class cho phương án
+            let className = "option-item";
+            if (isSelected && isCorrect) {
+              className += " selected correct";
+            } else if (isSelected && !isCorrect) {
+              className += " selected incorrect";
+            } else if (isCorrect) {
+              className += " correct";
+            }
+
+            li.className = className;
+
+            // Tạo nội dung phương án
+            li.innerHTML = `
+              <input type="radio" class="option-radio" name="question-${currentQuestionIndex}" ${isSelected ? "checked" : ""} disabled>
+              <span class="option-content">${option.content}</span>
+            `;
+
+            container.appendChild(li);
+          });
+        }
+
+        // Hàm cập nhật trạng thái nút điều hướng
+        function updateNavigationButtons() {
+          const prevButton = document.getElementById("prev-button");
+          const nextButton = document.getElementById("next-button");
+
+          prevButton.disabled = currentQuestionIndex === 0;
+          nextButton.disabled = !examData || currentQuestionIndex === examData.results.length - 1;
+        }
+      });
+    </script>
+  </body>
+</html>

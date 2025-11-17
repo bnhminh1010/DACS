@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tính năng - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <div class="nav-links">
+          <a href="home.html">Home</a>
+          <a href="features.html">Features</a>
+          <a href="contact.html">Contact</a>
+        </div>
+        <div class="auth-links" id="auth-links">
+          <a href="login.html" class="btn btn-primary">Login</a>
+          <a href="register.html" class="btn btn-secondary">Register</a>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <h1 class="hero-title">Khám phá các tính năng của ThinkAI</h1>
+        <p class="hero-subtitle">
+          Trải nghiệm học tập thông minh với công nghệ AI tiên tiến
+        </p>
+        <div class="hero-buttons">
+          <a href="register.html" id="start-button" class="btn btn-primary">Bắt đầu ngay</a>
+          <a href="testexam.html" class="btn btn-secondary">Thử bài test</a>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="grid">
+          <div class="card">
+            <h3 class="card-title">Hiểu về Trí tuệ Nhân tạo</h3>
+            <p class="card-text">
+              Đọc tài liệu về trí tuệ nhân tạo và trả lời các câu hỏi trắc
+              nghiệm liên quan đến cách hoạt động của AI trong giáo dục
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Giải toán bằng AI</h3>
+            <p class="card-text">
+              Sử dụng AI để hỗ trợ giải quyết các bài toán đại số và kiểm tra
+              đáp án của bạn với hệ thống tự động
+            </p>
+          </div>
+
+          <div class="card">
+            <h3 class="card-title">Kiểm tra kiến thức về lịch sử</h3>
+            <p class="card-text">
+              Làm bài kiểm tra nhanh về các sự kiện lịch sử quan trọng, từ thời
+              cổ đại đến hiện đại.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra xem người dùng đã đăng nhập chưa
+        const token = localStorage.getItem("token");
+        const userString = localStorage.getItem("user");
+        const authLinks = document.getElementById("auth-links");
+        const startButton = document.getElementById("start-button");
+
+        if (token && userString) {
+          try {
+            // Người dùng đã đăng nhập
+            const user = JSON.parse(userString);
+
+            // Cập nhật liên kết "Bắt đầu ngay" dựa trên vai trò
+            if (startButton) {
+              if (user.role === "teacher") {
+                startButton.href = "teacher-assignments.html"; // Giáo viên: đến trang quản lý bài tập
+              } else {
+                startButton.href = "student-assignments.html"; // Học sinh: đến trang danh sách bài tập
+              }
+            }
+
+            // Thay đổi nút login/register thành tên người dùng và nút đăng xuất
+            authLinks.innerHTML = `
+              <span class="btn btn-primary" style="background:#f4c542;color:#222;pointer-events:none;min-width:180px;text-align:center;font-weight:500;">${user.fullName || user.full_name || user.email}</span>
+              <button id="logout-button" class="btn btn-secondary" style="margin-left:10px;">Đăng xuất</button>
+            `;
+
+            // Thêm sự kiện cho nút đăng xuất
+            setTimeout(() => {
+              const logoutButton = document.getElementById("logout-button");
+              if (logoutButton) {
+                logoutButton.onclick = function () {
+                  localStorage.removeItem("token");
+                  localStorage.removeItem("user");
+                  window.location.reload();
+                };
+              }
+            }, 100);
+          } catch (error) {
+            console.error("Lỗi khi xử lý thông tin người dùng:", error);
+            localStorage.removeItem("user");
+            localStorage.removeItem("token");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

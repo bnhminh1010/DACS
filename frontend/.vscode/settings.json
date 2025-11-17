@@ -1,0 +1,16 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "testconnet",
+            "database": "test",
+            "username": "postgres",
+            "password": "Binhminh1010",
+            "connectionTimeout": 30
+        }
+    ],
+    "git.ignoreLimitWarning": true
+}

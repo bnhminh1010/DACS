@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - ThinkAI</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .error-message {
+        color: #dc3545;
+        font-size: 14px;
+        margin-bottom: 15px;
+        background-color: rgba(220, 53, 69, 0.1);
+        padding: 10px;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .error-message:not(:empty) {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="auth-form">
+        <a href="home.html" class="logo">ThinkAI</a>
+        <h2>Đăng nhập</h2>
+        <div id="error-message" class="error-message"></div>
+        <form id="login-form" action="#" method="POST">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Nhập email của bạn"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Nhập mật khẩu"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary">Đăng nhập</button>
+          <div class="auth-links-bottom">
+            <a href="register.html">Chưa có tài khoản? Đăng ký ngay</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginForm = document.getElementById("login-form");
+        const errorMessage = document.getElementById("error-message");
+
+        loginForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          errorMessage.textContent = "";
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            // Hiển thị trạng thái đang xử lý
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = "Đang xử lý...";
+            submitButton.disabled = true;
+
+            console.log(
+              "Đang gửi yêu cầu đến:",
+              "http://localhost:3000/api/auth/login"
+            );
+
+            const response = await fetch(
+              "http://localhost:3000/api/auth/login",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+              }
+            );
+
+            console.log("Trạng thái phản hồi:", response.status);
+
+            // Khôi phục nút submit
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+
+            // Lấy kết quả phản hồi dưới dạng text trước
+            const responseText = await response.text();
+            console.log("Phản hồi dạng text:", responseText);
+
+            // Nếu responseText rỗng hoặc không phải JSON hợp lệ
+            if (!responseText.trim()) {
+              throw new Error("Server trả về phản hồi rỗng");
+            }
+
+            // Chuyển đổi văn bản thành JSON
+            try {
+              const data = JSON.parse(responseText);
+              console.log("Dữ liệu phản hồi:", data);
+
+              if (response.ok) {
+                // Lưu token vào localStorage
+                if (data.token) {
+                  localStorage.setItem("token", data.token);
+                  console.log("Đã lưu token thành công");
+
+                  // Lưu thông tin người dùng nếu có
+                  if (data.user) {
+                    localStorage.setItem("user", JSON.stringify(data.user));
+
+                    // Chuyển hướng dựa trên role của người dùng
+                    console.log("Role người dùng:", data.user.role);
+                    if (data.user.role === "student") {
+                      window.location.href = "student-assignments.html";
+                    } else if (data.user.role === "teacher") {
+                      window.location.href = "teacher-assignments.html";
+                    } else {
+                      // Fallback nếu role không xác định
+                      console.warn("Role không xác định:", data.user.role);
+                      window.location.href = "home.html";
+                    }
+                  } else {
+                    console.warn(
+                      "Không có thông tin người dùng trong phản hồi"
+                    );
+                    window.location.href = "home.html";
+                  }
+                }
+              } else {
+                // Hiển thị thông báo lỗi
+                const errorMsg =
+                  data.message ||
+                  data.error ||
+                  "Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.";
+                console.error("Lỗi đăng nhập:", errorMsg);
+                errorMessage.textContent = errorMsg;
+              }
+            } catch (jsonError) {
+              console.error(
+                "Lỗi khi phân tích JSON:",
+                jsonError,
+                "Văn bản phản hồi:",
+                responseText
+              );
+              errorMessage.textContent =
+                "Phản hồi từ server không hợp lệ. Vui lòng kiểm tra console để biết thêm chi tiết.";
+            }
+          } catch (error) {
+            console.error("Chi tiết lỗi kết nối:", error);
+
+            // Khôi phục nút submit trong trường hợp lỗi
+            const submitButton = this.querySelector('button[type="submit"]');
+            if (submitButton.disabled) {
+              submitButton.textContent = "Đăng nhập";
+              submitButton.disabled = false;
+            }
+
+            // Kiểm tra các loại lỗi phổ biến
+            if (
+              error.message.includes("Failed to fetch") ||
+              error.message.includes("NetworkError")
+            ) {
+              errorMessage.textContent =
+                "Không thể kết nối đến máy chủ. Vui lòng kiểm tra nếu máy chủ đang chạy tại localhost:3000 và CORS đã được cấu hình đúng.";
+            } else {
+              errorMessage.textContent = "Đã xảy ra lỗi: " + error.message;
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
